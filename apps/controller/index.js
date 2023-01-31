@@ -37,6 +37,8 @@ async function main() {
             })
         const childrenCommands = await Promise.all(childrenCommandsPms);
 
+        console.log("コマンド: ", childrenCommands);
+
         sendRequest([
             getOwnCommand(),
             ...childrenCommands

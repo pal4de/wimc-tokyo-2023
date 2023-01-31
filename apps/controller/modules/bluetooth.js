@@ -60,6 +60,7 @@ let children = [];
 export async function becomeParent() {
     if (!parentReady) throw new Error(`親機としての準備が完了していません`);
 
+    console.log("親機になりました");
     setIsParent(true);
     // ほかにも親機がいないかチェックしてもいいかも
 
@@ -118,7 +119,10 @@ export async function notifyOrder(children) {
 
         const orderCh = characteristics.find(c => c.name === CharacaristicName.Order);
         if (!orderCh) throw new Error(`子機 ${child.address} から順序用Characteristicが見つかりません`);
-        await orderCh.writeAsync(Buffer.from(order.toString()), true);
+
+        const message = JSON.stringify({ order });
+        console.log("通知: ", message);
+        await orderCh.writeAsync(Buffer.from(message), true);
     });
     await Promise.all(promises);
 }
@@ -168,6 +172,7 @@ export async function initChild() {
 export async function becomeChildren() {
     if (!childReady) throw new Error(`子機としての準備が完了していません`);
 
+    console.log("子機になりました");
     setIsParent(false);
     noble.stopScanningAsync();
     console.log({ serviceUuid });
@@ -179,6 +184,7 @@ const readControlCharacteristic = new bleno.Characteristic({
     uuid: uuid.v4(),
     properties: ["read"],
     onReadRequest: (offset, callback) => {
+        console.log("読み取り: ", command);
         callback(
             bleno.Characteristic.RESULT_SUCCESS,
             Buffer.from(JSON.stringify(command))
@@ -196,6 +202,7 @@ const orderCharacteristic = new bleno.Characteristic({
 
         const { order } = JSON.parse(data.toString());
         if (typeof order === "number") {
+            console.log("順序: ", order);
             setOrder(order);
             result = bleno.Characteristic.RESULT_SUCCESS;
         } else {
