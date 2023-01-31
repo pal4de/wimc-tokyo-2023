@@ -53,6 +53,7 @@ async function init() {
         initWebsocket(),
         initBluetooth(),
     ]);
+    console.log("初期化が完了")
 }
 
 dotenv.config();
