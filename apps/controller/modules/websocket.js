@@ -2,7 +2,7 @@
 
 import * as uuid from "uuid";
 import nodeWebSocketLib from "websocket";
-import { RelayServer } from "../lib/RelayServer";
+import { RelayServer } from "../lib/RelayServer.js";
 
 /**
  * @typedef {{
@@ -29,7 +29,7 @@ export async function initWebsocket() {
 /**
  * リレーサーバーにリクエストを送る
  * 
- * @param {import("../common").ControllerData[]} commands 
+ * @param {import("./common").ControllerData[]} commands 
  */
 export function sendRequest(commands) {
     const requestId = uuid.v4();

@@ -1,14 +1,14 @@
 //@ts-check
 
 import dotenv from "dotenv";
-import { getOwnCommand, initCommon } from "./common";
-import { becomeChildren, becomeParent, getChildCommand, getChildren, initBluetooth, notifyOrder } from "./modules/bluetooth";
-import { buttonPressed, initGPIO } from "./modules/gpio";
-import { initWebsocket, sendRequest } from "./modules/websocket";
+import { getOwnCommand, initCommon } from "./modules/common.js";
+import { becomeChildren, becomeParent, getChildCommand, getChildren, initBluetooth, notifyOrder } from "./modules/bluetooth.js";
+import { buttonPressed, initGPIO } from "./modules/gpio.js";
+import { initWebsocket, sendRequest } from "./modules/websocket.js";
 
 /**
- * @typedef {import("./common").CommandData} CommandData
- * @typedef {import("./common").ControllerData} ControllerData
+ * @typedef {import("./modules/common").CommandData} CommandData
+ * @typedef {import("./modules/common").ControllerData} ControllerData
  */
 
 async function main() {
