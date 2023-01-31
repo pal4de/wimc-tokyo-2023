@@ -1,6 +1,5 @@
 //@ts-check
 
-
 import * as uuid from 'uuid';
 import { command, setOrder } from "./common.js";
 import bleno from "@abandonware/bleno";
@@ -16,7 +15,7 @@ import os from "os";
 /** @type {boolean} */
 export let isParent = false;
 
-export const ControllerNamePrefix = "COURAGE_CONTROLLER";
+export const ControllerNamePrefix = "COURAGE_CTRL";
 export const ControllerNamePattern = new RegExp(`^${ControllerNamePrefix}: `);
 
 export async function initBluetooth() {
@@ -127,7 +126,7 @@ export async function notifyOrder(children) {
 // // // // // child // // // // //
 
 /** @type {string} */
-let serviceUuid;
+const serviceUuid = uuid.v4();
 
 export const CharacaristicName = {
     ReadControl: "read-control",
@@ -140,11 +139,6 @@ const name = `${ControllerNamePrefix}: ${os.hostname()}`;
 
 export async function initChild() {
     console.log(`初期化: 子機`);
-    if (process.env[`SERVICE_UUID`]) {
-        serviceUuid = process.env[`SERVICE_UUID`].replace(/-/g, "");
-    } else {
-        throw new Error(`.envで SERVICE_UUID を設定する必要があります`);
-    }
 
     const primaryService = new bleno.PrimaryService({
         uuid: serviceUuid,
@@ -175,6 +169,7 @@ export async function becomeChildren() {
 
     setIsParent(false);
     noble.stopScanningAsync();
+    console.log({ serviceUuid });
     bleno.startAdvertising(name, [serviceUuid]);
 }
 
@@ -190,6 +185,7 @@ const readControlCharacteristic = new bleno.Characteristic({
     }
 })
 
+/** 順序通知用Characteristic */
 const orderCharacteristic = new bleno.Characteristic({
     uuid: uuid.v4(),
     properties: ["write"],
