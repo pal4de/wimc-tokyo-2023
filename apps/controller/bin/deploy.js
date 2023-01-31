@@ -3,8 +3,6 @@
 import { promises as fs } from "fs";
 import { NodeSSH } from "node-ssh";
 
-const ssh = new NodeSSH();
-
 const ignores = [
     /^.env$/,
     /^.git$/,
@@ -28,6 +26,8 @@ async function main() {
         try {
             echo(`ファイル転送開始`);
             indentLevel++;
+
+            const ssh = new NodeSSH();
 
             await ssh.connect({
                 host: destinationHost,
@@ -59,8 +59,16 @@ async function main() {
             indentLevel++;
 
             // TODO: プロセスの終了
-            echo(await ssh.exec("cd", [destinationPath]));
-            echo(await ssh.exec("npm", ["install", "--omit=dev"]));
+            await ssh.exec("mkdir", ["-p", destinationPath], {
+                cwd: "/home/pi/",
+                onStdout: (chunk) => echo(chunk.toString('utf8')),
+                onStderr: (chunk) => echo(chunk.toString('utf8')),
+            });
+            await ssh.exec("pnpm", ["install", "--prod"], {
+                cwd: destinationPath,
+                onStdout: (chunk) => echo(chunk.toString('utf8')),
+                onStderr: (chunk) => echo(chunk.toString('utf8')),
+            });
             // TODO: プロセスの開始
 
             indentLevel--;
