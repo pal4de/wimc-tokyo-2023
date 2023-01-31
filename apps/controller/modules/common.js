@@ -25,6 +25,14 @@ export let command;
 /** @type {number|undefined} */
 export let order;
 
+/**
+ * @param {number} ms
+ * @returns {Promise<void>}
+ */
+export function sleep(ms) {
+  return new Promise(res => setTimeout(res, ms))
+}
+
 export async function initCommon() {
   if (process.env["USER"] !== "root") {
     throw new Error(`rootユーザーとして起動してください`);

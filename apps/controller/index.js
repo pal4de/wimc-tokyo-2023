@@ -1,7 +1,7 @@
 //@ts-check
 
 import dotenv from "dotenv";
-import { getOwnCommand, initCommon } from "./modules/common.js";
+import { getOwnCommand, initCommon, sleep } from "./modules/common.js";
 import { becomeChildren, becomeParent, getChildCommand, getChildren, initBluetooth, notifyOrder } from "./modules/bluetooth.js";
 import { buttonPressed, initGPIO } from "./modules/gpio.js";
 import { initWebsocket, sendRequest } from "./modules/websocket.js";
@@ -19,6 +19,7 @@ async function main() {
         await buttonPressed();
 
         await becomeParent();
+        await sleep(5000);
         const children = await getChildren();
         notifyOrder(children);
 

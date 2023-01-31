@@ -44,7 +44,8 @@ export async function initParent() {
 
     noble.on('discover', peripheral => {
         const name = peripheral.advertisement.localName;
-        if (name.match(ControllerNamePattern)) {
+        if (name?.match(ControllerNamePattern)) {
+            console.log("子機を追加: ", peripheral.advertisement.localName)
             children.push(peripheral);
         }
     });
