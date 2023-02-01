@@ -11,7 +11,7 @@ sudo dtoverlay pwm-2chan pin=12 func=4 pin2=13 func2=4
 以下のコマンドで、`device`、`export`、`npwm`、`power`、`subsystem`、`uevent`、`unexport`が表示されることを確認する。
 
 ```(bash)
-ls /sys/class/pwm//pwmchip0
+ls /sys/class/pwm/pwmchip0
 ```
 
 以下のコマンドで、PWMを有効化する。
@@ -24,7 +24,7 @@ echo 1 > /sys/class/pwm/pwmchip0/export
 以下のコマンドで、`pwm0`、`pwm1`が表示されることを確認する。
 
 ```(bash)
-ls /sys/class/pwm//pwmchip0/
+ls /sys/class/pwm/pwmchip0
 ```
 
 以下のコマンドで、`capture`、`duty_cycle`、`enable`、`period`、`polarity`、`power`、`uevent`が表示されることを確認する。
