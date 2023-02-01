@@ -33,6 +33,8 @@ const POWER = {
 };
 // 出力指定ファイルパス
 const FILE_POWER = '/sys/class/pwm/pwmchip0/pwm1/enable';
+// 音程リスト
+let notes = [];
 
 async function speaker() {
   // PWM設定
