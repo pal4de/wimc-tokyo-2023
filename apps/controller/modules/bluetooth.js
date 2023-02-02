@@ -42,6 +42,7 @@ let children = new Map([]);
 
 export async function initParent() {
     console.log(`初期化: 親機`);
+
     noble.on('stateChange', state => {
         if (state === 'poweredOn') {
             parentReady = true;
@@ -106,7 +107,8 @@ export async function getChildren() {
  * @returns {Promise<void>}
  */
 export async function notifyOrder(children) {
-    const promises = children.map(async (child, order) => {
+    const promises = children.map(async (child, i) => {
+        const order = i + 2;
         const characteristics = await getCharacteristics(child);
 
         const orderCh = characteristics.find(c => c.uuid === orderCharacteristicId);
