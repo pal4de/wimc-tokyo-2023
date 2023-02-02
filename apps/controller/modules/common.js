@@ -39,7 +39,6 @@ export async function initCommon() {
   }
 
   console.log(`初期化: グローバル変数`);
-  process.env["NOBLE_MULTI_ROLE"] = "1";
   address = uuid.v4(); // TODO: BTアドレスを入れる
   command = { // TODO: 適当な値に
     id: "hoge",

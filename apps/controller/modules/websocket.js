@@ -35,5 +35,5 @@ export function sendRequest(commands) {
     const requestId = uuid.v4();
     const request = { requestId, commands };
     remoteChannel.send(JSON.stringify(request));
-    console.log(`Sent: ${JSON.stringify(request)}`);
+    console.log(`リレーサーバーに送信: ${JSON.stringify(request)}`);
 }

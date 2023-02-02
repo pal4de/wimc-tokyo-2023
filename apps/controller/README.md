@@ -6,3 +6,9 @@ sudo apt -y update
 sudo apt -y install python2 bluetooth bluez libbluetooth-dev libudev-dev
 sudo npm install -g pnpm
 ```
+
+### 実行方法
+
+```:bash
+sudo NOBLE_MULTI_ROLE=1 node controller/
+```

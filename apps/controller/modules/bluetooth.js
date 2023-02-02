@@ -1,6 +1,5 @@
 //@ts-check
 
-import * as uuid from 'uuid';
 import { command, setOrder } from "./common.js";
 import bleno from "@abandonware/bleno";
 import noble from "@abandonware/noble";
@@ -15,8 +14,12 @@ import os from "os";
 /** @type {boolean} */
 export let isParent = false;
 
-export const ControllerNamePrefix = "COURAGE_CTRL";
-export const ControllerNamePattern = new RegExp(`^${ControllerNamePrefix}: `);
+export const ControllerNamePrefix = "CRGCTRL";
+export const ControllerNamePattern = new RegExp(`^${ControllerNamePrefix}:`);
+
+const serviceUuid = 'fffffffffffffffffffffffffffffff0';
+const readControlCharacteristicId = 'fffffffffffffffffffffffffffffff1';
+const orderCharacteristicId = 'fffffffffffffffffffffffffffffff2';
 
 export async function initBluetooth() {
     await Promise.all([
@@ -32,9 +35,14 @@ export function setIsParent(value) {
 
 // // // // // parent // // // // //
 
+let parentReady = false;
+
+/** @type {Map<string, Child>} */
+let children = new Map([]);
+
 export async function initParent() {
     console.log(`初期化: 親機`);
-    bleno.on('stateChange', state => {
+    noble.on('stateChange', state => {
         if (state === 'poweredOn') {
             parentReady = true;
         } else if (state === 'poweredOff') {
@@ -42,19 +50,28 @@ export async function initParent() {
         }
     });
 
-    noble.on('discover', peripheral => {
+    noble.on('scanStart', () => console.log("スキャンを開始"));
+    noble.on('scanStop', () => console.log("スキャンを停止"));
+
+    noble.on('discover', async peripheral => {
         const name = peripheral.advertisement.localName;
-        if (name?.match(ControllerNamePattern)) {
-            console.log("子機を追加: ", peripheral.advertisement.localName)
-            children.push(peripheral);
-        }
-    });
+        if (!name?.match(ControllerNamePattern)) return;
+
+        children.set(peripheral.id, peripheral);
+        console.log('子機と接続:', peripheral.id);
+        peripheral.on('disconnect', () => {
+            children.delete(peripheral.id);
+            console.log('子機との接続が解除:', peripheral.id);
+        });
+
+        await peripheral.connectAsync();
+        const services = await peripheral.discoverServicesAsync();
+        services.map(async service => {
+            await service.discoverIncludedServicesAsync();
+            await service.discoverCharacteristicsAsync();
+        })
+    })
 }
-
-let parentReady = false;
-
-/** @type {Child[]} */
-let children = [];
 
 /** 親機になる */
 export async function becomeParent() {
@@ -65,7 +82,7 @@ export async function becomeParent() {
     // ほかにも親機がいないかチェックしてもいいかも
 
     bleno.stopAdvertising();
-    await noble.startScanningAsync();
+    noble.startScanning([], false);
 }
 
 /**
@@ -75,10 +92,31 @@ export async function becomeParent() {
  */
 export async function getChildren() {
     if (!isParent) throw new Error(`親機ではないため子機を取得できません`);
-    const promises = children.map(node => node.updateRssiAsync());
+    const childrenArr = [...children.values()];
+    const promises = childrenArr.map(node => node.updateRssiAsync());
     await Promise.all(promises);
-    const sorted = children.sort((a, b) => a.rssi - b.rssi);
+    const sorted = childrenArr.sort((a, b) => a.rssi - b.rssi);
     return sorted;
+}
+
+/**
+ * 子機に順番を通知
+ * 
+ * @param {Child[]} children
+ * @returns {Promise<void>}
+ */
+export async function notifyOrder(children) {
+    const promises = children.map(async (child, order) => {
+        const characteristics = await getCharacteristics(child);
+
+        const orderCh = characteristics.find(c => c.uuid === orderCharacteristicId);
+        if (!orderCh) throw new Error(`子機 ${child.address} から順序用キャラクタリスティックが見つかりません`);
+
+        const message = JSON.stringify({ order });
+        console.log("通知:", message);
+        await orderCh.writeAsync(Buffer.from(message), false);
+    });
+    await Promise.all(promises);
 }
 
 /**
@@ -88,12 +126,13 @@ export async function getChildren() {
  * @returns {Promise<CommandData>}
  */
 export async function getChildCommand(child) {
-    const { characteristics } = await child.discoverAllServicesAndCharacteristicsAsync();
-    console.log(`Characteristics: %j`, characteristics);
+    const characteristics = await getCharacteristics(child);
 
-    const readCommandCh = characteristics.find(c => c.name === CharacaristicName.ReadControl);
-    if (!readCommandCh) throw new Error(`子機 ${child.address} から操作読取用Characteristicが見つかりません`);
+    const readCommandCh = characteristics.find(c => c.uuid === readControlCharacteristicId);
+    if (!readCommandCh) throw new Error(`子機 ${child.address} から操作読取用キャラクタリスティックが見つかりません`);
+
     const controllerDataJson = (await readCommandCh.readAsync()).toString();
+    console.debug(controllerDataJson);
     const controllerData = JSON.parse(controllerDataJson);
 
     const id = controllerData['id'];
@@ -108,39 +147,23 @@ export async function getChildCommand(child) {
 }
 
 /**
- * 子機に順番を通知
- * 
- * @param {Child[]} children
+ * @param {noble.Peripheral} peripheral 
+ * @returns {Promise<noble.Characteristic[]>}
  */
-export async function notifyOrder(children) {
-    const promises = children.map(async (child, order) => {
-        const { characteristics } = await child.discoverAllServicesAndCharacteristicsAsync();
-        console.log(`Characteristics: %j`, characteristics);
-
-        const orderCh = characteristics.find(c => c.name === CharacaristicName.Order);
-        if (!orderCh) throw new Error(`子機 ${child.address} から順序用Characteristicが見つかりません`);
-
-        const message = JSON.stringify({ order });
-        console.log("通知: ", message);
-        await orderCh.writeAsync(Buffer.from(message), true);
-    });
-    await Promise.all(promises);
+async function getCharacteristics(peripheral) {
+    const characteristics = peripheral.services
+        .filter(service => !(service.name?.match(/^Generic (Access|Attribute)$/) ?? false))
+        .flatMap(service => {
+            return service.characteristics
+        })
+    return characteristics;
 }
-
 
 // // // // // child // // // // //
 
-/** @type {string} */
-const serviceUuid = uuid.v4();
-
-export const CharacaristicName = {
-    ReadControl: "read-control",
-    Order: "order",
-};
-
 let childReady = false;
 
-const name = `${ControllerNamePrefix}: ${os.hostname()}`;
+const name = `${ControllerNamePrefix}:${os.hostname()}`;
 
 export async function initChild() {
     console.log(`初期化: 子機`);
@@ -151,7 +174,7 @@ export async function initChild() {
             readControlCharacteristic,
             orderCharacteristic,
         ]
-    })
+    });
     bleno.setServices([primaryService]);
 
     bleno.on('stateChange', state => {
@@ -160,12 +183,15 @@ export async function initChild() {
         } else if (state === 'poweredOff') {
             childReady = false;
         }
-    })
+    });
 
-    bleno.on('advertisingStart', err => {
-        if (err) throw err;
-    })
+    bleno.on('advertisingStart', err => { if (err) throw err; });
+    bleno.on('accept', (address) => console.log(`子機が受容: ${address}`));
+    bleno.on('disconnect', (clientAddress) => console.log(`子機が切断: ${clientAddress}`));
 
+    process.on('SIGTERM', () => {
+        bleno.stopAdvertising();
+    })
 }
 
 /** 子機になる */
@@ -175,13 +201,15 @@ export async function becomeChildren() {
     console.log("子機になりました");
     setIsParent(false);
     noble.stopScanningAsync();
-    console.log({ serviceUuid });
+    children.forEach(child => child.disconnect());
+
     bleno.startAdvertising(name, [serviceUuid]);
+    console.log("アドバタイズを開始 サービスID:", serviceUuid);
 }
 
 /** 捜査情報の読み取り用Characteristic */
 const readControlCharacteristic = new bleno.Characteristic({
-    uuid: uuid.v4(),
+    uuid: readControlCharacteristicId,
     properties: ["read"],
     onReadRequest: (offset, callback) => {
         console.log("読み取り: ", command);
@@ -194,7 +222,7 @@ const readControlCharacteristic = new bleno.Characteristic({
 
 /** 順序通知用Characteristic */
 const orderCharacteristic = new bleno.Characteristic({
-    uuid: uuid.v4(),
+    uuid: orderCharacteristicId,
     properties: ["write"],
     onWriteRequest: (data, offset, withoutResponse, callback) => {
         /** @type {number} */

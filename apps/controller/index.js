@@ -17,11 +17,11 @@ async function main() {
 
     while (true) {
         await buttonPressed();
-
         await becomeParent();
-        await sleep(5000);
+
+        await sleep(3000);
         const children = await getChildren();
-        notifyOrder(children);
+        await notifyOrder(children);
 
         const childrenCommandsPms = children
             .map(async (node) => {
