@@ -18,6 +18,7 @@
     "websocket": "^1.0.34"
   },
   "devDependencies": {
+    "commander": "^10.0.0",
     "node-scp": "^0.0.22",
     "node-ssh": "^13.0.1",
     "ssh-config": "^4.2.0"

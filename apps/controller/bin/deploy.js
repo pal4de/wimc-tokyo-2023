@@ -1,5 +1,6 @@
 // @ts-check
 
+import { program } from "commander";
 import { promises as fs } from "fs";
 import { NodeSSH } from "node-ssh";
 
@@ -13,12 +14,12 @@ const ignores = [
 
 const destinationPath = "/home/pi/controller/";
 
-const args = process.argv;
-while (!args[0].match("deploy.js")) args.shift();
-args.shift();
+program.option('-i, --install');
+program.parse();
+const options = program.opts();
 
 async function main() {
-    const destinations = args;
+    const destinations = program.args;
     for (const destinationHost of destinations) {
         echo(`${destinationHost}: デプロイ開始`);
         indentLevel++;
@@ -55,24 +56,26 @@ async function main() {
             indentLevel--;
             echo(`ファイル転送完了`);
 
-            echo(`ビルド開始`);
-            indentLevel++;
+            if (options.install) {
+                echo(`パッケージインストール開始`);
+                indentLevel++;
 
-            // TODO: プロセスの終了
-            await ssh.exec("mkdir", ["-p", destinationPath], {
-                cwd: "/home/pi/",
-                onStdout: (chunk) => echo(chunk.toString('utf8')),
-                onStderr: (chunk) => echo(chunk.toString('utf8')),
-            });
-            await ssh.exec("pnpm", ["install", "--prod"], {
-                cwd: destinationPath,
-                onStdout: (chunk) => echo(chunk.toString('utf8')),
-                onStderr: (chunk) => echo(chunk.toString('utf8')),
-            });
-            // TODO: プロセスの開始
+                // TODO: プロセスの終了
+                await ssh.exec("mkdir", ["-p", destinationPath], {
+                    cwd: "/home/pi/",
+                    onStdout: (chunk) => echo(chunk.toString('utf8')),
+                    onStderr: (chunk) => echo(chunk.toString('utf8')),
+                });
+                await ssh.exec("pnpm", ["install", "--prod"], {
+                    cwd: destinationPath,
+                    onStdout: (chunk) => echo(chunk.toString('utf8')),
+                    onStderr: (chunk) => echo(chunk.toString('utf8')),
+                });
+                // TODO: プロセスの開始
 
-            indentLevel--;
-            echo(`ビルド完了`);
+                indentLevel--;
+                echo(`パッケージインストール完了`);
+            }
 
             indentLevel--;
             echo(`${destinationHost}: デプロイ完了`);
@@ -84,6 +87,7 @@ async function main() {
     }
     indentLevel--;
     echo("全て完了");
+
     process.exit();
 }
 
