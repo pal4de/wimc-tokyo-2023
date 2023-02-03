@@ -1,13 +1,11 @@
 //@ts-check
 
-import dotenv from "dotenv";
-import { getOwnCommand, initCommon, sleep } from "./modules/common.js";
+import { controller, initCommon, sleep } from "./modules/common.js";
 import { becomeChildren, becomeParent, getChildCommand, getChildren, initBluetooth, notifyOrder } from "./modules/bluetooth.js";
 import { buttonPressed, initGPIO } from "./modules/gpio.js";
 import { initWebsocket, sendRequest } from "./modules/websocket.js";
 
 /**
- * @typedef {import("./modules/common").CommandData} CommandData
  * @typedef {import("./modules/common").ControllerData} ControllerData
  */
 
@@ -24,23 +22,13 @@ async function main() {
         await notifyOrder(children);
 
         const childrenCommandsPms = children
-            .map(async (node) => {
-                const command = await getChildCommand(node);
-                /** @type {ControllerData} */
-                const controllerData = {
-                    address: node.address,
-                    command: command.id,
-                    value: command.value,
-                    strength: node.rssi,
-                }
-                return controllerData;
-            })
+            .map(async (node) => await getChildCommand(node))
         const childrenCommands = await Promise.all(childrenCommandsPms);
 
         console.log("コマンド: ", childrenCommands);
 
         sendRequest([
-            getOwnCommand(),
+            controller,
             ...childrenCommands
         ]);
 
@@ -59,5 +47,4 @@ async function init() {
     console.log("初期化が完了")
 }
 
-dotenv.config();
 main();

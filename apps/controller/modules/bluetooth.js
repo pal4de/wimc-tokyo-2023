@@ -1,13 +1,12 @@
 //@ts-check
 
-import { command, setOrder } from "./common.js";
+import { controller, setOrder } from "./common.js";
 import bleno from "@abandonware/bleno";
 import noble from "@abandonware/noble";
 import os from "os";
 
 /**
  * @typedef {noble.Peripheral} Child
- * @typedef {import("./common").CommandData} CommandData
  * @typedef {import("./common").ControllerData} ControllerData
  */
 
@@ -125,7 +124,7 @@ export async function notifyOrder(children) {
  * 子機から操作情報を取得
  * 
  * @param {Child} child
- * @returns {Promise<CommandData>}
+ * @returns {Promise<ControllerData>}
  */
 export async function getChildCommand(child) {
     const characteristics = await getCharacteristics(child);
@@ -137,15 +136,7 @@ export async function getChildCommand(child) {
     console.debug(controllerDataJson);
     const controllerData = JSON.parse(controllerDataJson);
 
-    const id = controllerData['id'];
-    if (!id) throw new Error(`子機 ${child.address} からの操作IDがありません`);
-    if (typeof id !== 'string') throw new Error(`子機 ${child.address} の操作IDの型が不正です (${typeof id})`);
-
-    const value = controllerData['value'];
-    if (!value) throw new Error(`子機 ${child.address} からの値がありません`);
-    if (typeof value !== 'number') throw new Error(`子機 ${child.address} の値の型が不正です (${typeof id})`);
-
-    return { id, value };
+    return controllerData;
 }
 
 /**
@@ -214,10 +205,10 @@ const readControlCharacteristic = new bleno.Characteristic({
     uuid: readControlCharacteristicId,
     properties: ["read"],
     onReadRequest: (offset, callback) => {
-        console.log("読み取り: ", command);
+        console.log("読み取り: ", controller);
         callback(
             bleno.Characteristic.RESULT_SUCCESS,
-            Buffer.from(JSON.stringify(command))
+            Buffer.from(JSON.stringify(controller))
         )
     }
 })

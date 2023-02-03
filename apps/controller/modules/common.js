@@ -1,26 +1,23 @@
 // @ts-check
 
-import * as uuid from 'uuid';
+import { execSync } from 'child_process';
+import dotenv from "dotenv";
 
 /**
- * @typedef {{
- *  id: string,
- *  value: number,
- * }} CommandData
+ * @typedef {0 | 1 | 2 | 3 | 4} Note
+ * @typedef {0 | 1 | 2 | 3} DrumPattern
+ * @typedef {"C" | "Dm" | "F" | "G7"} PlaylistPreset
  * 
  * @typedef {{
- *  address: string,
- *  command: CommandData["id"],
- *  value: CommandData["value"],
- *  strength: number,
+ *  bt_address: string,
+ *  notes: [Note, Note, Note, Note],
+ *  drum_pattern: DrumPattern,
+ *  playlist_preset: PlaylistPreset,
  * }} ControllerData
  */
 
-/** @type {string} */
-export let address;
-
-/** @type {CommandData} */
-export let command;
+/** @type {ControllerData} */
+export let controller;
 
 /** @type {number|undefined} */
 export let order;
@@ -34,31 +31,37 @@ export function sleep(ms) {
 }
 
 export async function initCommon() {
+  dotenv.config();
+
   if (process.env["USER"] !== "root") {
     throw new Error(`rootユーザーとして起動してください`);
   }
 
   console.log(`初期化: グローバル変数`);
-  address = uuid.v4(); // TODO: BTアドレスを入れる
-  command = { // TODO: 適当な値に
-    id: "hoge",
-    value: 925
+
+  const playlistPreset = process.env['PLAYLIST_PRESET'];
+  if (!playlistPreset || !["C", "Dm", "F", "G7"].includes(playlistPreset ?? "")) {
+    throw new Error(`PLAYLIST_PRESETの値が不正です: ${playlistPreset}`);
+  }
+  controller = {
+    bt_address: getBtAddress(),
+    notes: [0, 0, 0, 0],
+    drum_pattern: 0,
+    // @ts-ignore
+    playlist_preset: playlistPreset,
   };
-  console.dir({ address, command });
 }
 
-/** 
- * 自分自身の操作情報を取得
+/**
+ * その端末のBluetoothアドレスを取得する
  * 
- * @returns {ControllerData}
+ * @returns {string}
  */
-export function getOwnCommand() {
-  return {
-    address: address,
-    command: command.id,
-    value: command.value,
-    strength: Infinity,
-  };
+function getBtAddress() {
+  const pattern = /[0-9A-F][0-9A-F](?::[0-9A-F][0-9A-F]){3}/;
+  const address = execSync('hciconfig').toString().match(pattern)?.[0]
+  if (!address) throw new Error("Bluetoothアドレスを取得できません");
+  return address
 }
 
 /** @param {number|undefined} newOrder */
