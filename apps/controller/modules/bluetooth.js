@@ -1,9 +1,9 @@
 //@ts-check
 
-import { controller, setOrder } from "./common.js";
 import bleno from "@abandonware/bleno";
 import noble from "@abandonware/noble";
 import os from "os";
+import { controller, setOrder } from "./common.js";
 
 /**
  * @typedef {noble.Peripheral} Child
@@ -57,19 +57,26 @@ export async function initParent() {
         const name = peripheral.advertisement.localName;
         if (!name?.match(ControllerNamePattern)) return;
 
+        await noble.stopScanningAsync();
+
         children.set(peripheral.id, peripheral);
         console.log('子機と接続:', peripheral.id);
-        peripheral.on('disconnect', () => {
+        peripheral.once('disconnect', () => {
             children.delete(peripheral.id);
             console.log('子機との接続が解除:', peripheral.id);
         });
 
         await peripheral.connectAsync();
         const services = await peripheral.discoverServicesAsync();
-        services.map(async service => {
+        const servicesPms = services.map(async service => {
             await service.discoverIncludedServicesAsync();
             await service.discoverCharacteristicsAsync();
-        })
+        });
+        await Promise.all(servicesPms);
+
+        console.log("子機の準備が完了:", peripheral.id);
+
+        noble.startScanningAsync();
     })
 }
 
@@ -82,7 +89,7 @@ export async function becomeParent() {
     // ほかにも親機がいないかチェックしてもいいかも
 
     bleno.stopAdvertising();
-    noble.startScanning([], false);
+    await noble.startScanningAsync();
 }
 
 /**
@@ -92,10 +99,9 @@ export async function becomeParent() {
  */
 export async function getChildren() {
     if (!isParent) throw new Error(`親機ではないため子機を取得できません`);
-    const childrenArr = [...children.values()];
-    const promises = childrenArr.map(node => node.updateRssiAsync());
-    await Promise.all(promises);
-    const sorted = childrenArr.sort((a, b) => a.rssi - b.rssi);
+    noble.stopScanningAsync();
+    const sorted = [...children.values()].sort((a, b) => -(a.rssi - b.rssi));
+    console.log(sorted.map(child => child.rssi));
     return sorted;
 }
 
@@ -193,8 +199,8 @@ export async function becomeChildren() {
 
     console.log("子機になりました");
     setIsParent(false);
-    noble.stopScanningAsync();
-    children.forEach(child => child.disconnect());
+    const disconnectPms = [...children.values()].map(child => child.disconnectAsync());
+    await Promise.all(disconnectPms);
 
     bleno.startAdvertising(name, [serviceUuid]);
     console.log("アドバタイズを開始 サービスID:", serviceUuid);

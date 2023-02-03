@@ -17,7 +17,7 @@ async function main() {
         await buttonPressed();
         await becomeParent();
 
-        await sleep(3000);
+        await sleep(7000);
         const children = await getChildren();
         await notifyOrder(children);
 
@@ -25,7 +25,7 @@ async function main() {
             .map(async (node) => await getChildCommand(node))
         const childrenCommands = await Promise.all(childrenCommandsPms);
 
-        console.log("コマンド: ", childrenCommands);
+        console.log("コマンド:", childrenCommands);
 
         sendRequest([
             controller,
