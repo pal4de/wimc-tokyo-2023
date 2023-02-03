@@ -14,77 +14,79 @@ const ignores = [
 
 const destinationPath = "/home/pi/controller/";
 
-program.option('-i, --install');
+program
+    .option('-i, --install')
+    .option('-t, --target <string>')
+    .arguments('[string]');
 program.parse();
 const options = program.opts();
 
 async function main() {
-    const destinations = program.args;
-    for (const destinationHost of destinations) {
-        echo(`${destinationHost}: デプロイ開始`);
+    const target = options.target;
+
+    echo(`${target}: デプロイ開始`);
+    indentLevel++;
+
+    try {
+        echo(`ファイル転送開始`);
         indentLevel++;
 
-        try {
-            echo(`ファイル転送開始`);
+        const ssh = new NodeSSH();
+
+        await ssh.connect({
+            host: target,
+            username: "pi",
+            password: "raspberry"
+        });
+
+        const items = program.args.length > 0 ? program.args : await fs.readdir(".");
+        for (const item of items) {
+            if (ignores.some(pattern => item.match(pattern))) {
+                echo(`${item}: スキップ`);
+                continue;
+            }
+
+            const stat = await fs.lstat(item);
+            if (stat.isFile()) {
+                await ssh.putFile(item, `${destinationPath}/${item}`);
+                echo(`${item}: 完了`);
+            } else if (stat.isDirectory()) {
+                await ssh.putDirectory(item, `${destinationPath}/${item}`);
+                echo(`${item}: 完了`);
+            }
+        }
+
+        indentLevel--;
+        echo(`ファイル転送完了`);
+
+        if (options.install) {
+            echo(`パッケージインストール開始`);
             indentLevel++;
 
-            const ssh = new NodeSSH();
-
-            await ssh.connect({
-                host: destinationHost,
-                username: 'pi',
-                password: 'raspberry'
+            // TODO: プロセスの終了
+            await ssh.exec("mkdir", ["-p", destinationPath], {
+                cwd: "/home/pi/",
+                onStdout: (chunk) => echo(chunk.toString('utf8')),
+                onStderr: (chunk) => echo(chunk.toString('utf8')),
             });
-
-            const items = await fs.readdir(".");
-            for (const item of items) {
-                if (ignores.some(pattern => item.match(pattern))) {
-                    echo(`${item}: スキップ`);
-                    continue;
-                }
-
-                const stat = await fs.lstat(item);
-                if (stat.isFile()) {
-                    await ssh.putFile(item, `${destinationPath}/${item}`);
-                    echo(`${item}: 完了`);
-                } else if (stat.isDirectory()) {
-                    await ssh.putDirectory(item, `${destinationPath}/${item}`);
-                    echo(`${item}: 完了`);
-                }
-            }
+            await ssh.exec("pnpm", ["install", "--prod"], {
+                cwd: destinationPath,
+                onStdout: (chunk) => echo(chunk.toString('utf8')),
+                onStderr: (chunk) => echo(chunk.toString('utf8')),
+            });
+            // TODO: プロセスの開始
 
             indentLevel--;
-            echo(`ファイル転送完了`);
-
-            if (options.install) {
-                echo(`パッケージインストール開始`);
-                indentLevel++;
-
-                // TODO: プロセスの終了
-                await ssh.exec("mkdir", ["-p", destinationPath], {
-                    cwd: "/home/pi/",
-                    onStdout: (chunk) => echo(chunk.toString('utf8')),
-                    onStderr: (chunk) => echo(chunk.toString('utf8')),
-                });
-                await ssh.exec("pnpm", ["install", "--prod"], {
-                    cwd: destinationPath,
-                    onStdout: (chunk) => echo(chunk.toString('utf8')),
-                    onStderr: (chunk) => echo(chunk.toString('utf8')),
-                });
-                // TODO: プロセスの開始
-
-                indentLevel--;
-                echo(`パッケージインストール完了`);
-            }
-
-            indentLevel--;
-            echo(`${destinationHost}: デプロイ完了`);
-        } catch (e) {
-            echo(e.toString(), console.error);
-            indentLevel = 0;
-            continue;
+            echo(`パッケージインストール完了`);
         }
+
+        indentLevel--;
+        echo(`${target}: デプロイ完了`);
+    } catch (e) {
+        echo(e.toString(), console.error);
+        indentLevel = 0;
     }
+
     indentLevel--;
     echo("全て完了");
 
