@@ -13,6 +13,7 @@
     "@abandonware/bleno": "^0.5.1-4",
     "@abandonware/noble": "^1.9.2-19",
     "dotenv": "^16.0.3",
+    "max7219-display": "^2.1.0",
     "node-web-gpio": "^1.0.17",
     "uuid": "^9.0.0",
     "websocket": "^1.0.34"
