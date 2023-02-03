@@ -1,4 +1,4 @@
-class PresetCode {
+export class PresetCode {
     constructor(player, code, note) {
         this.player = player
         this.code = code;
@@ -35,5 +35,3 @@ class PresetCode {
         });
     }
 }
-
-export { PresetCode }
