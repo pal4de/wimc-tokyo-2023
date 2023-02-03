@@ -37,7 +37,10 @@ export function setIsParent(value) {
 let parentReady = false;
 
 /** @type {Map<string, Child>} */
-let children = new Map([]);
+const children = new Map();
+
+/** @type {Map<string, number[]>} */
+const rssiHistoryMap = new Map();
 
 export async function initParent() {
     console.log(`初期化: 親機`);
@@ -58,6 +61,16 @@ export async function initParent() {
         if (!name?.match(ControllerNamePattern)) return;
 
         await noble.stopScanningAsync();
+
+        rssiHistoryMap.set(peripheral.id, []);
+        const rssiHistoryIntervalId = setInterval(async () => {
+            const rssi = await peripheral.updateRssiAsync();
+            rssiHistoryMap.get(peripheral.id)?.push(rssi);
+        }, 100);
+        peripheral.once('disconnect', () => {
+            clearInterval(rssiHistoryIntervalId);
+            rssiHistoryMap.delete(peripheral.id);
+        });
 
         children.set(peripheral.id, peripheral);
         console.log('子機と接続:', peripheral.id);
@@ -100,8 +113,8 @@ export async function becomeParent() {
 export async function getChildren() {
     if (!isParent) throw new Error(`親機ではないため子機を取得できません`);
     noble.stopScanningAsync();
-    const sorted = [...children.values()].sort((a, b) => -(a.rssi - b.rssi));
-    console.log(sorted.map(child => child.rssi));
+    const sorted = [...children.values()].sort((a, b) => -(calcAverageRssi(a) - calcAverageRssi(b)));
+    console.log(sorted.map(child => calcAverageRssi(child)));
     return sorted;
 }
 
@@ -156,6 +169,18 @@ async function getCharacteristics(peripheral) {
             return service.characteristics
         })
     return characteristics;
+}
+
+/** 
+ * @param {Child} child
+ * @returns {number}
+ */
+function calcAverageRssi(child) {
+    const rssiHistory = rssiHistoryMap.get(child.id);
+    if (!rssiHistory) throw new Error(`子機のRSSI履歴が取得できません: ${child.id}`)
+    const sum = rssiHistory.reduce((a, b) => a + b);
+    const average = sum / rssiHistory.length
+    return average;
 }
 
 // // // // // child // // // // //
