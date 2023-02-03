@@ -1,10 +1,3 @@
-const sleep = time => new Promise(resolve => setTimeout(resolve, time));
-
-const sleptLog = async val => {
-    await sleep(2000);
-    console.log('sleptLog', val);
-};
-
 export class PresetDrum {
     constructor(player, pattern) {
         this.player = player;
