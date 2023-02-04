@@ -1,0 +1,7 @@
+{
+    "person": {
+      "name": "mebee",
+      "age": 20,
+      "address": ["tokyo", "japan"]      
+    }
+}  

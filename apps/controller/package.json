@@ -1,0 +1,26 @@
+{
+  "name": "controller",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "sudo NOBLE_MULTI_ROLE=1 node ."
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@abandonware/bleno": "^0.5.1-4",
+    "@abandonware/noble": "^1.9.2-19",
+    "dotenv": "^16.0.3",
+    "node-web-gpio": "^1.0.17",
+    "uuid": "^9.0.0",
+    "websocket": "^1.0.34"
+  },
+  "devDependencies": {
+    "commander": "^10.0.0",
+    "node-scp": "^0.0.22",
+    "node-ssh": "^13.0.1",
+    "ssh-config": "^4.2.0"
+  }
+}

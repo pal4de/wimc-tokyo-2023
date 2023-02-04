@@ -1,0 +1,351 @@
+@charset "utf-8";
+
+body {
+    overflow-x: hidden;
+    background-color: #AECFED;
+}
+
+header {
+    position: fixed;
+    z-index: 999;
+    top: 0;
+    left: 0;
+    width: 100%;
+    box-sizing: border-box;
+}
+.header_logo{
+    background: #FED500;
+}
+.header_nav{
+    background: white;
+}
+
+.logo {
+    position: relative;
+    text-align: center;
+    margin: 0;
+    padding: 5% 0 2% 0;
+    width: 100%;
+    font-weight: bold;
+}
+
+/* header-navi */
+
+header .navi {
+    margin: 0 0 0 auto;
+    padding: 0;
+    font-size: 14px;
+    font-weight: bold;
+    display: flex;
+    list-style: none;
+}
+header .navi ul {
+    display: flex;
+}
+header .navi li {
+    flex: 1 0 auto;
+    margin: 10px 0 0px 0px;
+}
+header .navi li:first-child {
+    margin-left: 0;
+}
+header .navi li a {
+    text-align: center;
+    display: block;
+    box-sizing: border-box;
+    color: #333;
+    text-decoration:none;
+}
+
+header .navi li img {
+    position: absolute;
+    margin-left: 15%;
+    margin-top: -13%;
+}
+/*header .navi li a:hover {
+    border-width: 10px;
+    border-bottom: thick solid #FED500;
+    padding-bottom:5%;
+}*/
+
+header #navi1{
+    border-bottom: 7px solid #FED500;
+    padding-bottom:2%;
+}
+
+header #navi2{
+    padding-bottom:2%;
+}
+
+header #navi3{
+    padding-bottom:2%;
+}
+
+/* layout */
+/*
+body {
+  margin: 0;
+  padding: 0;
+}
+#main {
+  height: 3000px;
+}
+*/
+
+#main {
+    padding-top: 35%;
+}
+
+/*
+#result{
+    padding: 1em;
+    background-color: whitesmoke;
+    color: royalblue;
+}
+
+table{
+    border-collapse: collapse;
+}
+
+table, td{
+    border: solid 1px royalblue;
+}
+
+td{
+    padding: 1em;
+}
+*/
+
+.sample_box11 {
+    position:absolute;
+    width: 30%;/* 紙の横幅 100%にすると全幅表示に */
+    padding: 5px;
+    margin-top: 7%;
+    margin-left:65%;
+    background: #EFCFE2;/* 紙の色 */
+    color: #153692;/* 文字色 */
+    box-shadow: 4px 4px 4px rgba(0,0,0,0.03);transform:rotate(7deg);
+    word-break: break-all;
+    z-index: 10%;
+}
+.sample_box11 p {
+    margin: 0; 
+    padding: 0;
+    font-size: 0.9em;
+}
+.sample_box11_tape {
+    width: 50%;
+    height: 20px;
+    margin: -13px auto 0;
+    background: #989898;
+    transform: rotate(-7deg);
+    opacity: 0.1;
+}
+.sample_box11_title {
+    text-align: center;
+    font-size: 1.3em!important;
+    margin-top: 0px!important;
+}
+
+.sample_box11_title_s {
+    text-align: center;
+    font-size: 0.3em!important;
+    margin-top: 0px!important;
+}
+
+.box{
+    position:absolute;
+    text-align: center;
+    width: 80%;
+    margin-top: -50%;
+    margin: 10% 10% 0 10%;
+    background-color:white;/*背景色*/
+    border: dotted 6px #EA6088;/*線*/
+    color:#000000;/*文字色*/
+    border-radius: 20px;/*角の丸み*/
+    z-index: 0%;
+}
+
+#section1_img{
+    margin-top: 20%;
+}
+
+#section2_img{
+    margin-top: 15%;
+}
+
+#section1{
+    margin-top: 10%;
+}
+
+#section2{
+    display: none;
+}
+
+#section3{
+    display: none;
+}
+
+#result{
+    padding: 1em;
+}
+
+/*
+table{
+    border-collapse: collapse;
+}
+
+table, td{
+    border: solid 1px;
+}
+
+td{
+    padding: 1em;
+}
+*/
+
+.htable{
+    position: relative;
+    text-align: center;
+    margin-left: 17%;
+}
+
+table{
+    margin-top: 5%;
+    margin-bottom: 10%;
+    width: 80%;
+    border-collapse: collapse;
+}
+  
+table tr{
+    border-bottom: solid 2px white;
+}
+  
+table tr:last-child{
+    border-bottom: none;
+}
+  
+table th{
+    position: relative;
+    text-align: center;
+    width: 30%;
+    background-color: #153692;
+    color: white;
+    text-align: center;
+    padding: 2px 0;
+}
+  
+table th:after{
+    display: block;
+    content: "";
+    width: 0px;
+    height: 0px;
+    position: absolute;
+    top:calc(50% - 10px);
+    right:-10px;
+    border-left: 10px solid #153692;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+}
+  
+table td{
+    text-align: center;
+    width: 70%;
+    text-align: center;
+    background-color: #eee;
+    padding: 2px 0;
+}
+
+/*メニューをページ下部に固定*/
+#sp-fixed-menu{
+   position: fixed;
+   width: 100%;
+   bottom: 0px;
+   font-size: 0;
+   opacity: 0.9;
+   z-index: 99;
+}
+
+/*メニューを横並びにする*/
+#sp-fixed-menu ul{
+   display: flex;
+   list-style: none;
+   padding:0;
+   margin:0;
+   width:100%;
+}
+
+#sp-fixed-menu li{
+   justify-content: center;
+   align-items: center;
+   width: 50%;
+   padding:0;
+   margin:0;
+   font-size: 14px;
+   border-right: 1px solid #fff;
+}
+
+/*左側メニューを緑色に*/
+#sp-fixed-menu li:first-child{
+   background: #DE6C31;
+}
+
+/*左側メニューをオレンジ色に*/
+#sp-fixed-menu li:last-child{
+   background: #989898;
+}
+
+/*ボタンを調整*/
+#sp-fixed-menu li a{
+   color: #fff;
+   text-align: center;
+   display:block;
+   width: 100%;
+   padding:10px;
+   text-decoration:none;
+}
+
+#design{
+    display: block;
+}
+
+#history{
+    display: none;
+}
+
+
+ul.cp_list {
+	position: relative;
+	padding-left: 10%;
+	list-style-type: none;
+}
+ul.cp_list li {
+	padding: 0.5em 0.5em 0.6em 0.5em;
+	margin-bottom: 5px;
+	line-height: 1.5;
+	vertical-align: middle;
+	background: #153692;
+	border-radius: 20px 0px 0px 20px;
+	color: #ffffff;
+}
+ul.cp_list li::before {
+	display:inline-block;
+	vertical-align: middle;
+	content:'';
+	margin-right: 8px;
+	width:1em;
+	height: 1em;
+	background: #fff;
+	border-radius: 50%;
+}
+
+.Button-style {
+    display: inline-block;
+    padding: auto;
+    color: #153692;
+    border-radius: 25px;
+    background-color: white;
+    border: none;
+    cursor: pointer;
+    margin-left:10%;
+}
