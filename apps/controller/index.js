@@ -2,7 +2,7 @@
 
 import { controller, initCommon, sleep } from "./modules/common.js";
 import { becomeChildren, becomeParent, getChildCommand, getChildren, initBluetooth, notifyOrder } from "./modules/bluetooth.js";
-import { buttonPressed, initGPIO } from "./modules/gpio.js";
+import { buttonPressed, initGPIO } from "./modules/gpio/button.js";
 import { initWebsocket, sendRequest } from "./modules/websocket.js";
 
 /**
