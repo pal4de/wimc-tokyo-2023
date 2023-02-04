@@ -56,6 +56,7 @@ function footerSelect(fnum){
         document.getElementById("design").style.display ="none";
         document.getElementById("history").style.display ="block";
         document.getElementById("header_nav").style.display ="none";
+        DisplayHistory();
     }else{
         console.log("適切な処理がされていません");
     }

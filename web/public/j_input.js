@@ -58,15 +58,15 @@ function formatJSON(data){
 
 // 起動時の処理
 window.addEventListener("load", ()=>{
-    // JSON表示用
-    //j_result = document.getElementById("j_result");
-    j_result1 = document.getElementById("j_result1");
-    j_result2 = document.getElementById("j_result2");
-    j_result3 = document.getElementById("j_result3");
+  // JSON表示用
+  //j_result = document.getElementById("j_result");
+  j_result1 = document.getElementById("j_result1");
+  j_result2 = document.getElementById("j_result2");
+  j_result3 = document.getElementById("j_result3");
 
-    // JSONファイルを取得して表示
-    fetch(url)
-        .then( response => response.json())
-        .then( data => formatJSON(data));
+  // JSONファイルを取得して表示
+  fetch(url)
+    .then( response => response.json())
+    .then( data => formatJSON(data));
 
 });

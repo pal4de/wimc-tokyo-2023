@@ -1,0 +1,18 @@
+{
+  "name": "test",
+  "version": "1.0.0",
+  "description": "",
+  "main": "receive.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "node-web-gpio": "^1.0.17",
+    "node-web-i2c": "^1.1.23",
+    "websocket": "^1.0.34"
+  }
+}
