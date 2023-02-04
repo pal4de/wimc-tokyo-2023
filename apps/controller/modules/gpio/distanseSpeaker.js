@@ -53,7 +53,9 @@ export let vl;
 /** @type {Note} */
 let currentNote = 0;
 
-export async function initDistanceSensor() {
+process.on('exit', stopSpeaker);
+
+export async function startDistanceSensor() {
   console.log("初期化: 測距センサー");
 
   vl = new VL53L0X(i2cPort, 0x29);
@@ -66,11 +68,7 @@ export async function initDistanceSensor() {
     console.error("PWM初期化中のエラー:", error);
     await setPWM();
   }
-}
 
-process.on('exit', stopSpeaker);
-
-export function startDistanceSensor() {
   // 並行実行
   watchDistance();
   watchShortPress();

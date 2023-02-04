@@ -4,7 +4,7 @@ import { controller, initCommon, sleep } from "./modules/common.js";
 import { becomeChildren, becomeParent, getChildCommand, getChildren, initBluetooth, notifyOrder } from "./modules/bluetooth.js";
 import { buttonPressed, initButton } from "./modules/gpio/button.js";
 import { initWebsocket, sendRequest } from "./modules/websocket.js";
-import { initDistanceSensor, startDistanceSensor } from "./modules/gpio/distanseSpeaker.js";
+import { startDistanceSensor } from "./modules/gpio/distanseSpeaker.js";
 import { initGPIO } from "./modules/gpio/index.js";
 
 /**
@@ -49,7 +49,6 @@ async function init() {
     await Promise.all([
         initCommon(),
         initButton(),
-        initDistanceSensor(),
         initWebsocket(),
         initBluetooth(),
     ]);
