@@ -1,89 +1,109 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="ja">
   <head>
+    <!-- Required meta tags -->
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Welcome to Firebase Hosting</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <!-- update the version number as needed -->
-    <script defer src="/__/firebase/9.17.1/firebase-app-compat.js"></script>
-    <!-- include only the Firebase features as you need -->
-    <script defer src="/__/firebase/9.17.1/firebase-auth-compat.js"></script>
-    <script defer src="/__/firebase/9.17.1/firebase-database-compat.js"></script>
-    <script defer src="/__/firebase/9.17.1/firebase-firestore-compat.js"></script>
-    <script defer src="/__/firebase/9.17.1/firebase-functions-compat.js"></script>
-    <script defer src="/__/firebase/9.17.1/firebase-messaging-compat.js"></script>
-    <script defer src="/__/firebase/9.17.1/firebase-storage-compat.js"></script>
-    <script defer src="/__/firebase/9.17.1/firebase-analytics-compat.js"></script>
-    <script defer src="/__/firebase/9.17.1/firebase-remote-config-compat.js"></script>
-    <script defer src="/__/firebase/9.17.1/firebase-performance-compat.js"></script>
-    <!-- 
-      initialize the SDK after all desired features are loaded, set useEmulator to false
-      to avoid connecting the SDK to running emulators.
-    -->
-    <script defer src="/__/firebase/init.js?useEmulator=true"></script>
-
-    <style media="screen">
-      body { background: #ECEFF1; color: rgba(0,0,0,0.87); font-family: Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; }
-      #message { background: white; max-width: 360px; margin: 100px auto 16px; padding: 32px 24px; border-radius: 3px; }
-      #message h2 { color: #ffa100; font-weight: bold; font-size: 16px; margin: 0 0 8px; }
-      #message h1 { font-size: 22px; font-weight: 300; color: rgba(0,0,0,0.6); margin: 0 0 16px;}
-      #message p { line-height: 140%; margin: 16px 0 24px; font-size: 14px; }
-      #message a { display: block; text-align: center; background: #039be5; text-transform: uppercase; text-decoration: none; color: white; padding: 16px; border-radius: 4px; }
-      #message, #message a { box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24); }
-      #load { color: rgba(0,0,0,0.4); text-align: center; font-size: 13px; }
-      @media (max-width: 600px) {
-        body, #message { margin-top: 0; background: white; box-shadow: none; }
-        body { border-top: 16px solid #ffa100; }
-      }
-    </style>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link href="style.css" rel="stylesheet" type="text/css" media="all">
+    <title>WebIoTハッカソン(勇気)</title>
   </head>
   <body>
-    <div id="message">
-      <h2>Welcome</h2>
-      <h1>Firebase Hosting Setup Complete</h1>
-      <p>You're seeing this because you've successfully setup Firebase Hosting. Now it's time to go build something extraordinary!</p>
-      <a target="_blank" href="https://firebase.google.com/docs/hosting/">Open Hosting Documentation</a>
+    <header>
+      <div class="header_logo">
+        <div class="logo"><img src="./img/logo.png" alt="" width="15%">  プロダクト名</div>
+      </div>
+      <div class="header_nav" id="header_nav">
+        <ul class="navi">
+          <li id="navi1"><a href="#" onclick="navSelect(1)">距離(きょり)</a></li>
+          <li id="navi2"><a href="#" onclick="navSelect(2)">高さ(たかさ)</a></li>
+          <li id="navi3"><a href="#" onclick="navSelect(3)">向き(むき)</a></li>
+        </ul>
+      </div >
+    </header>
+    <div id="main">
+      <div id="messageDiv" ></div>
+      <!--
+      <div class="container">
+          <div class="row">
+              <div class="col-xs-6 col-lg-4">テスト1</div>
+              <div class="col-xs-6 col-lg-4">テスト2</div>
+              <div class="col-xs-12 col-lg-4">テスト3</div>
+          </div>
+      </div>
+      -->
+
+      <div id="design">
+        <div id="section1">
+          <div class="box">
+            <img id="section1_img" src="./img/section1_img.png" alt="" width="100%">
+            <div class="htable"><div id="j_result1">JSONデータを取得中...</div></div>
+          </div>
+          <div class="sample_box11">
+            <div class="sample_box11_tape"> </div>
+            <p class="sample_box11_title_s">きょり</p>
+            <p class="sample_box11_title">距離</p>
+          </div>
+        </div>
+        <div id="section2">
+          <div class="box">
+            <img id="section2_img" src="./img/section2_img.png" alt="" width="80%">
+            <div class="htable"><div id="j_result2">JSONデータを取得中...</div></div>
+          </div>
+          <div class="sample_box11">
+            <div class="sample_box11_tape"> </div>
+            <p class="sample_box11_title_s">たかさ</p>
+            <p class="sample_box11_title">高さ</p>
+          </div>
+        </div>
+        <div id="section3">
+          <div class="box">
+            <img id="section2_img" src="./img/section3_img.png" alt="" width="80%">
+            <div class="htable"><div id="j_result3">JSONデータを取得中...</div></div>
+          </div>
+          <div class="sample_box11">
+            <div class="sample_box11_tape"> </div>
+            <p class="sample_box11_title_s">むき</p>
+            <p class="sample_box11_title">向き</p>
+          </div>
+        </div>
+      </div>
     </div>
-    <p id="load">Firebase SDK Loading&hellip;</p>
 
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        const loadEl = document.querySelector('#load');
-        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
-        // // The Firebase SDK is initialized and available here!
-        //
-        // firebase.auth().onAuthStateChanged(user => { });
-        // firebase.database().ref('/path/to/ref').on('value', snapshot => { });
-        // firebase.firestore().doc('/foo/bar').get().then(() => { });
-        // firebase.functions().httpsCallable('yourFunction')().then(() => { });
-        // firebase.messaging().requestPermission().then(() => { });
-        // firebase.storage().ref('/path/to/ref').getDownloadURL().then(() => { });
-        // firebase.analytics(); // call to activate
-        // firebase.analytics().logEvent('tutorial_completed');
-        // firebase.performance(); // call to activate
-        //
-        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
+    <div id="history">
+      <ul class="cp_list">
+        <li>2023/01/20 09:30<button  class="Button-style">詳細</button></li>
+        <li>2023/01/20 09:40<button  class="Button-style">詳細</button></li>
+        <li>2023/01/20 09:50<button  class="Button-style">詳細</button></li>
+        <li>2023/01/20 10:00<button  class="Button-style">詳細</button></li>
+        <li>2023/01/21 09:30<button  class="Button-style">詳細</button></li>
+        <li>2023/01/21 09:40<button  class="Button-style">詳細</button></li>
+        <li>2023/01/21 09:50<button  class="Button-style">詳細</button></li>
+        <li>2023/01/21 10:00<button  class="Button-style">詳細</button></li>
+        <li>2023/01/22 09:30<button  class="Button-style">詳細</button></li>
+      </ul>
+    </div>
 
-        try {
-          let app = firebase.app();
-          let features = [
-            'auth', 
-            'database', 
-            'firestore',
-            'functions',
-            'messaging', 
-            'storage', 
-            'analytics', 
-            'remoteConfig',
-            'performance',
-          ].filter(feature => typeof app[feature] === 'function');
-          loadEl.textContent = `Firebase SDK loaded with ${features.join(', ')}`;
-        } catch (e) {
-          console.error(e);
-          loadEl.textContent = 'Error loading the Firebase SDK, check the console.';
-        }
-      });
-    </script>
+    <footer>
+      <div id="sp-fixed-menu" class="for-sp">
+        <ul>
+          <li id="footer1"><a href="#" onclick="footerSelect(0)">設計図<br>(せっけいしょ)</a></li>
+          <li id="footer2"><a href="#" onclick="footerSelect(1)">履歴<br>(りれき)</a></li>
+        </ul>
+      </div>
+    </footer>
+
+    <script type="module" src="./config.js"></script>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script type="module" src="./j_input.js"></script>
+    <script type="module" src="./controller.js"></script>
+    <script type="text/javascript" src="./script.js"></script>
   </body>
 </html>
