@@ -1,12 +1,11 @@
 //@ts-check
 
-import { controller, initCommon, sleep } from "./modules/common.js";
 import { becomeChildren, becomeParent, getChildCommand, getChildren, initBluetooth, notifyOrder } from "./modules/bluetooth.js";
+import { controller, initCommon, sleep } from "./modules/common.js";
 import { buttonEventEmitter, initButton, watchButton } from "./modules/gpio/button.js";
+import { initDirectionSensor, startDirectionSensor } from "./modules/gpio/direction.js";
+import { initDistanceSensor, startDistanceSensor } from "./modules/gpio/distanseSpeaker.js";
 import { initWebsocket, sendRequest } from "./modules/websocket.js";
-import { startDistanceSensor } from "./modules/gpio/distanseSpeaker.js";
-import { initGPIO } from "./modules/gpio/index.js";
-import { startDirectionSensor } from "./modules/gpio/direction.js";
 
 /**
  * @typedef {import("./modules/common").ControllerData} ControllerData
@@ -14,6 +13,10 @@ import { startDirectionSensor } from "./modules/gpio/direction.js";
 
 async function main() {
     await init();
+    watchButton();
+    startDistanceSensor();
+    startDirectionSensor();
+
     await becomeChildren(); // みんな最初はこども
 
     buttonEventEmitter.on('pressedLong', async () => {
@@ -44,8 +47,6 @@ async function main() {
 
 /** 初期化 */
 async function init() {
-    await initGPIO();
-
     await Promise.all([
         initCommon(),
         initButton(),
@@ -53,9 +54,8 @@ async function init() {
         initBluetooth(),
     ]);
 
-    watchButton();
-    startDistanceSensor();
-    startDirectionSensor();
+    await initDistanceSensor();
+    await initDirectionSensor();
 
     console.log("初期化が完了");
 }

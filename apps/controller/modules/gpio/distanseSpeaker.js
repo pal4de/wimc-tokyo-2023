@@ -8,7 +8,7 @@ import { promisify } from 'util';
 import { controller, sleep } from "../common.js";
 import { buttonEventEmitter } from "./button.js";
 import { direction } from "./direction.js";
-import { i2cPort } from "./index.js";
+import { getI2CPort } from "./index.js";
 
 const exec = promisify(childProsess.exec);
 
@@ -58,10 +58,10 @@ let currentNote = 0;
 process.on('exit', () => writeFileSync(FILE_POWER, String(POWER["OFF"])));
 process.on('SIGINT', () => writeFileSync(FILE_POWER, String(POWER["OFF"])));
 
-export async function startDistanceSensor() {
+export async function initDistanceSensor() {
   console.log("初期化: 測距センサー");
 
-  vl = new VL53L0X(i2cPort, 0x29);
+  vl = new VL53L0X(await getI2CPort(), 0x29);
   await vl.init(); // for Long Range Mode (<2m) : await vl.init(true);
 
   // PWM設定
@@ -71,7 +71,9 @@ export async function startDistanceSensor() {
     console.error("PWM初期化中のエラー:", error);
     await setPWM();
   }
+}
 
+export async function startDistanceSensor() {
   // 並行実行
   watchDistance();
   playSound();

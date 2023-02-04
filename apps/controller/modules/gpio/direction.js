@@ -4,7 +4,7 @@
 import MPU6050 from "@chirimen/mpu6050";
 import { OperationError } from "node-web-i2c";
 import { controller, sleep } from "../common.js";
-import { i2cPort } from "./index.js";
+import { getI2CPort } from "./index.js";
 
 /** @typedef {"up" | "down" | "left" | "right"} Direction */
 /** @type {Direction} */
@@ -18,9 +18,15 @@ const directionDrumPatternMap = {
   right: 3,
 }
 
-export async function startDirectionSensor() {
-  const mpu6050 = new MPU6050(i2cPort, 0x68);
+/** @type {{ init(): Promise<void>, readAll(): Promise<{gx: number, gy: number, gz: number, rx: number, ry: number, rz: number}> }} */
+let mpu6050;
+
+export async function initDirectionSensor() {
+  mpu6050 = new MPU6050(await getI2CPort(), 0x68);
   await mpu6050.init();
+}
+
+export async function startDirectionSensor() {
 
   while (true) {
     try {
