@@ -4,13 +4,13 @@ export const mokRequest = {
         {
             "bt_address": "34-22-79-74-B1-92",
             "notes": [
-                4,
+                1,
                 1,
                 3,
                 4
             ], // 0: 無音, 1: 低音, 2: 中低音, ...
             "drum_pattern": 1, // 1, 2: dramパターン
-            "playlist_preset": "G7" // "G7", "C", "Dm", "F": コントローラー固有のコード
+            "playlist_preset": "F" // "G7", "C", "Dm", "F": コントローラー固有のコード
         },
         {
             "bt_address": "15-EE-B4-96-8D-A9",
@@ -27,7 +27,7 @@ export const mokRequest = {
             "bt_address": "57-C5-D6-EC-12-17",
             "notes": [
                 4,
-                0,
+                3,
                 1,
                 2
             ],

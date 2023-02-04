@@ -5,12 +5,6 @@ import { RelayServer } from "../../lib/RelayServer.js";
 let channel;
 
 async function connect() {
-	// GPIOポート0の初期化
-	// var gpioAccess = await requestGPIOAccess();
-	// var mbGpioPorts = gpioAccess.ports;
-	// gpioPort0 = mbGpioPorts.get(26);
-	// await gpioPort0.export("out"); //port0 out
-
 	// webSocketリレーの初期化
 	var relay = RelayServer("chirimentest", "chirimenSocket", nodeWebSocketLib, "https://chirimen.org");
 	channel = await relay.subscribe("playerCourage");
@@ -19,7 +13,11 @@ async function connect() {
 }
 
 function displayResult({ data }) {
-	musicPlay(data.controllers);
+	try {
+		musicPlay(data.controllers);
+	} catch (e) {
+		console.log("音楽再生でエラーが発生しました", e)	
+	}
 }
 
 connect();
