@@ -1,5 +1,5 @@
-import { TEMPO } from '../const.js'
-
+import { TEMPO, ABSOULT_PATH } from '../const.js'
+``
 export class PresetCode {
     constructor(player, code, notes) {
         this.player = player
@@ -19,15 +19,15 @@ export class PresetCode {
     }
 
     get basePath() {
-        return `./music/Ba${this.code}1.wav`; 
+        return ABSOULT_PATH + `Ba${this.code}1.wav`; 
     }
 
     get codePath() {
-        return `./music/${this.code}.wav`;
+        return ABSOULT_PATH + `${this.code}.wav`;
     }
 
     getSoundPath(note) {
-        return `./music/Glo${note}.wav`;
+        return ABSOULT_PATH + `Glo${note}.wav`;
     }
 
     get sound() {
@@ -35,6 +35,8 @@ export class PresetCode {
     }
 
     async play() {
+        console.log('pwd', process.cwd());
+
         this.player.play({
             path: this.codePath,
         });

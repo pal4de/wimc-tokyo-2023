@@ -10,20 +10,23 @@ import { TEMPO } from './const.js';
 // const G = new PresetCode(player, "F", 4);
 // const DrArrayDm = new PresetDrum(player, 1)
 
-let code;
-let drum;
+export async function musicPlay(controllers) {
+    let code;
+    let drum;
 
-for(const c of mokRequest.controllers) {
-    code = new PresetCode(player, c.playlist_preset, c.notes);
-    drum = new PresetDrum(player, c.drum_pattern);
+    for (const c of controllers) {
+        code = new PresetCode(player, c.playlist_preset, c.notes);
+        drum = new PresetDrum(player, c.drum_pattern);
 
 
-    await new Promise((resolve) => {
-        setTimeout(() => {
-            console.log('📣 change next controller...')
-            code.play();
-            drum.play();
-            resolve();
-        }, TEMPO * 4);
-    });
+        await new Promise((resolve) => {
+            setTimeout(() => {
+                console.log('📣 change next controller...');
+                console.log('');
+                code.play();
+                // drum.play();
+                resolve();
+            }, TEMPO * 4);
+        });
+    }
 }

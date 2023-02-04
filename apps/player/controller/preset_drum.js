@@ -1,4 +1,4 @@
-import { TEMPO } from '../const.js'
+import { ABSOULT_PATH, TEMPO } from '../const.js'
 
 export class PresetDrum {
     constructor(player, pattern) {
@@ -22,7 +22,7 @@ export class PresetDrum {
             this.instrument = 'Snare Drum'
         }
 
-        return `./music/${this.instrument}.wav`;
+        return ABSOULT_PATH + `${this.instrument}.wav`;
     }
 
     get drumPatterns() {
