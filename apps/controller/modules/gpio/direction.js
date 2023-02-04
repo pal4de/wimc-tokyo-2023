@@ -2,6 +2,7 @@
 
 // ジャイロセンサーからコントローラーの向きを判別する。
 import MPU6050 from "@chirimen/mpu6050";
+import { OperationError } from "node-web-i2c";
 import { controller, sleep } from "../common.js";
 import { i2cPort } from "./index.js";
 
@@ -22,23 +23,33 @@ export async function startDirectionSensor() {
   await mpu6050.init();
 
   while (true) {
-    const data = await mpu6050.readAll();
+    try {
+      const data = await mpu6050.readAll();
 
-    const accel = [data.gx, data.gy, data.gz];
-    // const gyro = [data.rx, data.ry, data.rz];
-    const value_direction = Math.atan2(accel[0], accel[2]) * 1000 * Math.PI / 90;
-    if (-30 <= value_direction && value_direction <= 30) { // TODO: 全体が完成し次第、値の調整
-      direction = "down";
-    } else if (30 < value_direction && value_direction < 75) {
-      direction = "right";
-    } else if (-75 < value_direction && value_direction < -30) {
-      direction = "left";
-    } else {
-      direction = "up";
+      const accel = [data.gx, data.gy, data.gz];
+      // const gyro = [data.rx, data.ry, data.rz];
+      const value_direction = Math.atan2(accel[0], accel[2]) * 1000 * Math.PI / 90;
+      if (-30 <= value_direction && value_direction <= 30) { // TODO: 全体が完成し次第、値の調整
+        direction = "down";
+      } else if (30 < value_direction && value_direction < 75) {
+        direction = "right";
+      } else if (-75 < value_direction && value_direction < -30) {
+        direction = "left";
+      } else {
+        direction = "up";
+      }
+
+      // console.debug(direction);
+      controller.drum_pattern = directionDrumPatternMap[direction];
+    } catch (err) {
+      // たまにミスが発生？握りつぶしちゃダメなやつかも
+      // エラーが発生した後まったく成功しないなら要対応
+      if (err instanceof OperationError) {
+        console.error("方向検知でのオペレーションエラー:", err)
+      } else {
+        throw err;
+      }
     }
-
-    // console.debug(direction);
-    controller.drum_pattern = directionDrumPatternMap[direction];
 
     await sleep(100);
   }

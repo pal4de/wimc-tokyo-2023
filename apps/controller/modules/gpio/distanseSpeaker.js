@@ -3,6 +3,7 @@
 import VL53L0X from "@chirimen/vl53l0x";
 import childProsess from 'child_process';
 import { promises as fs, writeFileSync } from 'fs';
+import { OperationError } from "node-web-i2c";
 import { promisify } from 'util';
 import { controller, sleep } from "../common.js";
 import { buttonEventEmitter } from "./button.js";
@@ -87,19 +88,29 @@ export async function startDistanceSensor() {
 
 async function watchDistance() {
   while (true) {
-    let distance = await getDistance();
-    if (direction !== "up") continue;
+    try {
+      let distance = await getDistance();
+      if (direction !== "up") continue;
 
-    if (distance < 100) {
-      currentNote = 0;
-    } else if (distance < 200) {
-      currentNote = 1;
-    } else if (distance < 300) {
-      currentNote = 2;
-    } else if (distance < 400) {
-      currentNote = 3;
-    } else {
-      currentNote = 4;
+      if (distance < 100) {
+        currentNote = 0;
+      } else if (distance < 200) {
+        currentNote = 1;
+      } else if (distance < 300) {
+        currentNote = 2;
+      } else if (distance < 400) {
+        currentNote = 3;
+      } else {
+        currentNote = 4;
+      }
+    } catch (err) {
+      // たまにミスが発生？握りつぶしちゃダメなやつかも
+      // エラーが発生した後まったく成功しないなら要対応
+      if (err instanceof OperationError) {
+        console.error("測距でのオペレーションエラー:", err)
+      } else {
+        throw err;
+      }
     }
 
     await sleep(100);
