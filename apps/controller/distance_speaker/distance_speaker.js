@@ -4,6 +4,7 @@ import {requestGPIOAccess} from "./node_modules/node-web-gpio/dist/index.js";
 import VL53L0X from "@chirimen/vl53l0x";
 import fs from 'fs';
 import child_process from 'child_process';
+import { networkInterfaces } from "os";
 
 const {exec} = child_process;
 const sleep = msec => new Promise(resolve => setTimeout(resolve, msec));
@@ -45,11 +46,11 @@ await vl.init(); // for Long Range Mode (<2m) : await vl.init(true);
 const gpioAccess = await requestGPIOAccess();
 const port5 = gpioAccess.ports.get(5);
 // 出力音程リスト
-let notes = [0, 0, 0, 0];
+export let notes = [0, 0, 0, 0];
 let count = 0
 
 // 距離に応じた高さの音を出力する関数
-async function distance_speaker() {
+export async function distance_speaker() {
   // PWM設定
   exec('ls /sys/class/pwm/pwmchip0 | grep pwm1', (error) => {
     if (error) {
@@ -60,6 +61,8 @@ async function distance_speaker() {
   await sleep(5000);
   await port5.export("in");
   let distance;
+  notes = [0, 0, 0, 0];
+  count = 0;
   while (true) {
     var val = await port5.read();
     if (val == 0) {
@@ -69,10 +72,7 @@ async function distance_speaker() {
         await sleep(2000);
         displayResult(notes);
         stopSpeaker();
-        notes = [0, 0, 0, 0];
-        count = 0;
-        // 強制終了
-        process.kill(process.pid, 'SIGTERM');
+        return notes;
       }
     } else {
       distance = await getDistance();
