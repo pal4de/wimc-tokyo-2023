@@ -1,0 +1,26 @@
+{
+    "requestId": "リクエストID (念のため)",
+    "caption": "caption",
+    "commands": [
+      {
+        "btAddress": "BlueToothのアドレス (念のため)",
+        "command": "①",
+        "value":{"v1":0, "v2":35, "v3":0}
+      },
+      {
+        "btAddress": "BlueToothのアドレス (念のため)",
+        "command": "②",
+        "value":{"v1":5, "v2":65, "v3":45}
+      },
+      {
+        "btAddress": "BlueToothのアドレス (念のため)",
+        "command": "③",
+        "value":{"v1":25, "v2":-85, "v3":-95}
+      },
+      {
+        "btAddress": "BlueToothのアドレス (念のため)",
+        "command": "④",
+        "value":{"v1":65, "v2":-5, "v3":180}
+      }
+    ]
+  }
