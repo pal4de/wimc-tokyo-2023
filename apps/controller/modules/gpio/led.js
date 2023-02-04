@@ -37,9 +37,12 @@ export function initLed() {
             case "order": {
                 if (order === undefined) return;
                 displayDriver.set(0, patterns.order[order - 1]);
+                break;
             }
             case "playlistPreset": {
+                displayDriver.clear(0)
                 // TODO: 実装
+                break;
             }
         }
     }, ms);
@@ -66,11 +69,11 @@ function pattern(strings, ...variables) {
     const result = pattern.split('\n')
         .map(rowStr => rowStr.replace(/(.)\1/g, '$1'))
         .map(rowStr => [...rowStr])
-        //@ts-ignore
         .map(row => row.map(dot => dot === "#" ? 1 : 0))
 
     return result;
 }
+
 
 const patterns = {
     order: [
@@ -97,10 +100,10 @@ const patterns = {
         pattern`
         ....########....
         ..############..
-        ..####....####..
+        ....##....####..
         ........######..
         ........######..
-        ..####....####..
+        ....##....####..
         ..############..
         ....########....
         `,

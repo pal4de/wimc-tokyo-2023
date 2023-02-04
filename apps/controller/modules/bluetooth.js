@@ -4,6 +4,7 @@ import bleno from "@abandonware/bleno";
 import noble from "@abandonware/noble";
 import os from "os";
 import { controller, setOrder } from "./common.js";
+import { setDisplayMode } from "./gpio/led.js";
 
 /**
  * @typedef {noble.Peripheral} Child
@@ -210,8 +211,14 @@ export async function initChild() {
     });
 
     bleno.on('advertisingStart', err => { if (err) throw err; });
-    bleno.on('accept', (address) => console.log(`子機が受容: ${address}`));
-    bleno.on('disconnect', (clientAddress) => console.log(`子機が切断: ${clientAddress}`));
+    bleno.on('accept', (address) => {
+        setDisplayMode("loading");
+        console.log(`子機が受容: ${address}`)
+    });
+    bleno.on('disconnect', (clientAddress) => {
+        setDisplayMode("playlistPreset");
+        console.log(`子機が切断: ${clientAddress}`)
+    });
 
     process.on('SIGTERM', () => {
         bleno.stopAdvertising();
@@ -256,6 +263,7 @@ const orderCharacteristic = new bleno.Characteristic({
         if (typeof order === "number") {
             console.log("順序: ", order);
             setOrder(order);
+            setDisplayMode("order")
             result = bleno.Characteristic.RESULT_SUCCESS;
         } else {
             console.error("順序の型が異常です");
