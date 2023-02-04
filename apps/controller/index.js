@@ -2,8 +2,10 @@
 
 import { controller, initCommon, sleep } from "./modules/common.js";
 import { becomeChildren, becomeParent, getChildCommand, getChildren, initBluetooth, notifyOrder } from "./modules/bluetooth.js";
-import { buttonPressed, initGPIO } from "./modules/gpio/button.js";
+import { buttonPressed, initButton } from "./modules/gpio/button.js";
 import { initWebsocket, sendRequest } from "./modules/websocket.js";
+import { initDistanceSensor, startDistanceSensor } from "./modules/gpio/distance_speaker.js";
+import { initGPIO } from "./modules/gpio/index.js";
 
 /**
  * @typedef {import("./modules/common").ControllerData} ControllerData
@@ -42,13 +44,20 @@ async function main() {
 
 /** 初期化 */
 async function init() {
+    await initGPIO();
+
     await Promise.all([
         initCommon(),
-        initGPIO(),
+        initButton(),
+        initDistanceSensor(),
         initWebsocket(),
         initBluetooth(),
     ]);
-    console.log("初期化が完了")
+
+    startDistanceSensor();
+    // startDirectionSensor();
+
+    console.log("初期化が完了");
 }
 
 main();

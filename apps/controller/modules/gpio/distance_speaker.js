@@ -1,12 +1,27 @@
-// return: 0:無音,1:低音,2:中低音,3:中高音,4:高音
-import VL53L0X from "@chirimen/vl53l0x";
-import child_process from 'child_process';
-import fs from 'fs';
-import { requestGPIOAccess } from "node-web-gpio/dist/index.js";
-import { requestI2CAccess } from "node-web-i2c/index.js";
+//@ts-check
 
-const { exec } = child_process;
-const sleep = msec => new Promise(resolve => setTimeout(resolve, msec));
+import VL53L0X from "@chirimen/vl53l0x";
+import childProsess from 'child_process';
+import { promises as fs } from 'fs';
+import { promisify } from 'util';
+import { controller, sleep } from "../common.js";
+import { buttonPressed } from './button.js';
+import { i2cPort } from "./index.js";
+
+const exec = promisify(childProsess.exec);
+
+/**
+ * @typedef {import("../common").Note} Note
+ */
+
+// PWM設定ファイルパス
+const FILE_PWM = '/sys/class/pwm/pwmchip0/export';
+// 周期記載ファイルパス
+const FILE_PERIOD = '/sys/class/pwm/pwmchip0/pwm1/period';
+// パルス幅記載ファイルパス
+const FILE_PWIDTH = '/sys/class/pwm/pwmchip0/pwm1/duty_cycle';
+// 出力指定ファイルパス
+const FILE_POWER = '/sys/class/pwm/pwmchip0/pwm1/enable';
 
 // 周波数リスト(Hz)
 const FREQ = {
@@ -19,79 +34,109 @@ const FREQ = {
   "シ": 988,
   "(ド)": 1047
 };
+
 // PWM有効化GPIOピンリスト
 const PIN_PWM = {
   "1": 12,
   "2": 13
 };
-// PWM設定ファイルパス
-const FILE_PWM = '/sys/class/pwm/pwmchip0/export';
-// 周期記載ファイルパス
-const FILE_PERIOD = '/sys/class/pwm/pwmchip0/pwm1/period';
-// パルス幅記載ファイルパス
-const FILE_PWIDTH = '/sys/class/pwm/pwmchip0/pwm1/duty_cycle';
+
 // 出力指定リスト(JSON)
 const POWER = {
   "OFF": 0,
   "ON": 1
 };
-// 出力指定ファイルパス
-const FILE_POWER = '/sys/class/pwm/pwmchip0/pwm1/enable';
 
-const i2cAccess = await requestI2CAccess();
-const port1 = i2cAccess.ports.get(1);
-const vl = new VL53L0X(port1, 0x29);
-await vl.init(); // for Long Range Mode (<2m) : await vl.init(true);
-const gpioAccess = await requestGPIOAccess();
-const port5 = gpioAccess.ports.get(5);
-// 出力音程リスト
-export let notes = [0, 0, 0, 0];
-let count = 0
+/** @type {{ getRange(): Promise<number>, init(): Promise<void> }} */
+export let vl;
 
-// 距離に応じた高さの音を出力する関数
-export async function distance_speaker() {
+/** @type {Note} */
+let currentNote = 0;
+
+export async function initDistanceSensor() {
+  console.log("初期化: 測距センサー");
+
+  vl = new VL53L0X(i2cPort, 0x29);
+  await vl.init(); // for Long Range Mode (<2m) : await vl.init(true);
+
   // PWM設定
-  exec('ls /sys/class/pwm/pwmchip0 | grep pwm1', (error) => {
-    if (error) {
-      // console.log("exec setPWM");
-      setPWM();
-    }
-  });
-  await sleep(5000);
-  await port5.export("in");
-  let distance;
-  notes = [0, 0, 0, 0];
-  count = 0;
+  try {
+    await exec('ls /sys/class/pwm/pwmchip0 | grep pwm1');
+  } catch (error) {
+    console.error("PWM初期化中のエラー:", error);
+    await setPWM();
+  }
+}
+
+process.on('exit', stopSpeaker);
+
+export function startDistanceSensor() {
+  // 並行実行
+  watchDistance();
+  watchShortPress();
+  playSound();
+}
+
+async function watchDistance() {
   while (true) {
-    var val = await port5.read();
-    if (val == 0) {
-      determineDistance(count);
-      count += 1;
-      if (4 <= count) {
-        await sleep(2000);
-        displayResult(notes);
-        stopSpeaker();
-        return notes;
-      }
+    // TODO: 下向きの時だけ判定
+    let distance = await getDistance();
+
+    if (distance < 100) {
+      currentNote = 0;
+    } else if (distance < 200) {
+      currentNote = 1;
+    } else if (distance < 300) {
+      currentNote = 2;
+    } else if (distance < 400) {
+      currentNote = 3;
     } else {
-      distance = await getDistance();
-      if (Number(distance) < 100) {
-        stopSpeaker();
-      } else if (Number(distance) < 200) {
-        stopSpeaker();
+      currentNote = 4;
+    }
+
+    await sleep(100);
+  }
+}
+
+async function playSound() {
+  while (true) {
+    // TODO: 下向きの時だけ判定
+    await sleep(100);
+
+    switch (currentNote) {
+      case 1: {
         startSpeaker(FREQ["ド"]);
-      } else if (Number(distance) < 300) {
-        stopSpeaker();
+        break;
+      }
+      case 2: {
         startSpeaker(FREQ["ミ"]);
-      } else if (Number(distance) < 400) {
-        stopSpeaker();
+        break;
+      }
+      case 3: {
         startSpeaker(FREQ["ソ"]);
-      } else {
-        stopSpeaker();
+        break;
+      }
+      case 4: {
         startSpeaker(FREQ["シ"]);
+        break;
+      }
+      default: {
+        stopSpeaker();
+        break;
       }
     }
-    await sleep(100);
+  }
+}
+
+async function watchShortPress() {
+  let notesArrayPointer = 0;
+  while (true) {
+    // TODO: 下向きの時だけ判定
+    if (await buttonPressed() === 'short') {
+      controller.notes[notesArrayPointer] = currentNote;
+      notesArrayPointer += 1;
+      notesArrayPointer %= controller.notes.length;
+    }
   }
 }
 
@@ -102,67 +147,38 @@ async function startSpeaker(freq) {
   // パルス幅(nsec)
   const PWIDTH = Math.floor(PERIOD / 2);
   // 周期設定
-  await setSpeakerConfig(FILE_PERIOD, PERIOD);
+  await fs.writeFile(FILE_PERIOD, String(PERIOD));
   // パルス幅設定
-  await setSpeakerConfig(FILE_PWIDTH, PWIDTH);
+  await fs.writeFile(FILE_PWIDTH, String(PWIDTH));
   // 出力開始
-  await setSpeakerConfig(FILE_POWER, POWER["ON"]);
+  await fs.writeFile(FILE_POWER, String(POWER["ON"]));
 }
+
 // スピーカー出力停止関数
 async function stopSpeaker() {
   // 出力停止
-  await setSpeakerConfig(FILE_POWER, POWER["OFF"]);
-}
-
-// スピーカー設定関数
-async function setSpeakerConfig(file, value) {
-  await fs.writeFile(file, String(value), function (err) {
-    if (err) throw err;
-    // console.log('Set Success: ' + value);
-  });
+  await fs.writeFile(FILE_POWER, String(POWER["OFF"]));
 }
 
 // PWM有効化関数
 async function setPWM() {
-  await exec('sudo dtoverlay pwm-2chan pin=' + PIN_PWM["1"] + ' func=4 pin2=' + PIN_PWM["2"] + ' func2=4', (error) => {
-    if (error) {
-      console.error(`exec error: ${error}`);
-      return;
-    }
-  })
+  await exec('sudo dtoverlay pwm-2chan pin=' + PIN_PWM["1"] + ' func=4 pin2=' + PIN_PWM["2"] + ' func2=4')
+  console.log('sudo dtoverlay pwm-2chan pin=' + PIN_PWM["1"] + ' func=4 pin2=' + PIN_PWM["2"] + ' func2=4')
+
   await sleep(1000);
-  await exec('sudo echo 0 > ' + FILE_PWM, (error) => {
-    if (error) {
-      console.error(`exec error: ${error}`);
-      return;
-    }
-  })
-  sleep(1000);
-  await exec('sudo echo 1 > ' + FILE_PWM, (error) => {
-    if (error) {
-      console.error(`exec error: ${error}`);
-      return;
-    }
-  })
+
+  await exec('sudo echo 0 > ' + FILE_PWM)
+  console.log('sudo echo 0 > ' + FILE_PWM)
+
+  await sleep(1000);
+
+  await exec('sudo echo 1 > ' + FILE_PWM)
+  console.log('sudo echo 1 > ' + FILE_PWM)
 }
 
 // 距離取得関数
 async function getDistance() {
   const distance_result_get = await vl.getRange();
-  // console.log(`${distance_result_get} [mm]`);
+  // console.debug(`${distance_result_get} [mm]`);
   return distance_result_get;
 }
-
-// 距離確定関数
-async function determineDistance(num) {
-  const distance_result_determine = await vl.getRange();
-  console.log(`${distance_result_determine} [mm]`);
-  notes.splice((num % 5), 1, distance_result_determine);
-}
-
-// 結果出力関数
-async function displayResult(result) {
-  console.log('音程リスト' + result)
-}
-
-distance_speaker()
