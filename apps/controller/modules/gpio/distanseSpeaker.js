@@ -91,7 +91,8 @@ export async function startDistanceSensor() {
 async function watchDistance() {
   while (true) {
     try {
-      let distance = await getDistance();
+      await sleep(300);
+      let distance = await vl.getRange();
       if (direction !== "up") continue;
 
       if (distance < 100) {
@@ -114,14 +115,12 @@ async function watchDistance() {
         throw err;
       }
     }
-
-    await sleep(100);
   }
 }
 
 async function playSound() {
   while (true) {
-    await sleep(100);
+    await sleep(300);
     if (direction !== "up") {
       stopSpeaker();
       continue;
@@ -160,9 +159,12 @@ async function startSpeaker(freq) {
   const PWIDTH = Math.floor(PERIOD / 2);
   // 周期設定
   await fs.writeFile(FILE_PERIOD, String(PERIOD));
+
   // パルス幅設定
   await fs.writeFile(FILE_PWIDTH, String(PWIDTH));
+
   // 出力開始
+  await sleep(10);
   await fs.writeFile(FILE_POWER, String(POWER["ON"]));
 }
 
@@ -176,21 +178,13 @@ async function stopSpeaker() {
 async function setPWM() {
   await exec('sudo dtoverlay pwm-2chan pin=' + PIN_PWM["1"] + ' func=4 pin2=' + PIN_PWM["2"] + ' func2=4')
   console.log('sudo dtoverlay pwm-2chan pin=' + PIN_PWM["1"] + ' func=4 pin2=' + PIN_PWM["2"] + ' func2=4')
-
-  await sleep(1000);
+  await sleep(10);
 
   await exec('sudo echo 0 > ' + FILE_PWM)
   console.log('sudo echo 0 > ' + FILE_PWM)
-
-  await sleep(1000);
+  await sleep(10);
 
   await exec('sudo echo 1 > ' + FILE_PWM)
   console.log('sudo echo 1 > ' + FILE_PWM)
-}
-
-// 距離取得関数
-async function getDistance() {
-  const distance_result_get = await vl.getRange();
-  // console.debug(`${distance_result_get} [mm]`);
-  return distance_result_get;
+  await sleep(10);
 }

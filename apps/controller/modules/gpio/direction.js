@@ -30,6 +30,7 @@ export async function startDirectionSensor() {
 
   while (true) {
     try {
+      await sleep(300);
       const data = await mpu6050.readAll();
 
       const gyro = [data.gx, data.gy, data.gz];
@@ -56,7 +57,5 @@ export async function startDirectionSensor() {
         throw err;
       }
     }
-
-    await sleep(100);
   }
 }
