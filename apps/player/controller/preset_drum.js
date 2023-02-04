@@ -1,3 +1,5 @@
+import { TEMPO } from '../const.js'
+
 export class PresetDrum {
     constructor(player, pattern) {
         this.player = player;
@@ -29,12 +31,16 @@ export class PresetDrum {
 
     async play() {
         for (const type of this.drumPatterns) {
-            await this.player.play({
-                path: this.getSoundPath(type),
-                sync: true
+            await new Promise((resolve) => {
+                setTimeout(() => {
+                    this.player.play({
+                        path: this.getSoundPath(type),
+                        // sync: true,
+                    });
+                    console.log('📣 play sound :', this.getSoundPath(type));
+                    resolve();
+                }, TEMPO);
             });
-
-            console.log('📣 play sound :', this.instrument);
         }
     }
 }
