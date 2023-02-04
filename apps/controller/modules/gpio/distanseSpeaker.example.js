@@ -1,7 +1,7 @@
 //@ts-check
 
 import { initGPIO } from "./index.js";
-import { initDistanceSensor, startDistanceSensor } from "./distance_speaker.js";
+import { initDistanceSensor, startDistanceSensor } from "./distanseSpeaker.js";
 
 (async () => {
   await initGPIO();

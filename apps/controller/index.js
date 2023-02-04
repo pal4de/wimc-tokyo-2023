@@ -4,7 +4,7 @@ import { controller, initCommon, sleep } from "./modules/common.js";
 import { becomeChildren, becomeParent, getChildCommand, getChildren, initBluetooth, notifyOrder } from "./modules/bluetooth.js";
 import { buttonPressed, initButton } from "./modules/gpio/button.js";
 import { initWebsocket, sendRequest } from "./modules/websocket.js";
-import { initDistanceSensor, startDistanceSensor } from "./modules/gpio/distance_speaker.js";
+import { initDistanceSensor, startDistanceSensor } from "./modules/gpio/distanseSpeaker.js";
 import { initGPIO } from "./modules/gpio/index.js";
 
 /**
