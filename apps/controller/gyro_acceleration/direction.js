@@ -4,9 +4,9 @@ import {requestI2CAccess} from "./node_modules/node-web-i2c/index.js";
 import MPU6050 from "@chirimen/mpu6050";
 
 const sleep = msec => new Promise(resolve => setTimeout(resolve, msec));
-let direction;  // 向き
+export let direction;  // 向き
 
-async function main() {
+export async function gyroAcceleration() {
   const gpioAccess = await requestGPIOAccess();
   const port5 = gpioAccess.ports.get(5);
   await port5.export("in");
@@ -21,7 +21,8 @@ async function main() {
     } else {
       if (flag) {
         flag = false;
-        sendResult(direction);
+        displayResult(direction);
+        return direction;
       }
     }
     await sleep(100);
@@ -48,8 +49,8 @@ async function checkRotation() {
   }
 }
 
-async function sendResult(result) {
+async function displayResult(result) {
   console.log(result)
 }
 
-main();
+gyroAcceleration();
