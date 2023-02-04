@@ -2,10 +2,11 @@
 
 import VL53L0X from "@chirimen/vl53l0x";
 import childProsess from 'child_process';
-import { promises as fs } from 'fs';
+import { promises as fs, writeFileSync } from 'fs';
 import { promisify } from 'util';
 import { controller, sleep } from "../common.js";
 import { buttonPressed } from './button.js';
+import { direction } from "./direction.js";
 import { i2cPort } from "./index.js";
 
 const exec = promisify(childProsess.exec);
@@ -53,7 +54,8 @@ export let vl;
 /** @type {Note} */
 let currentNote = 0;
 
-process.on('exit', stopSpeaker);
+process.on('exit', () => writeFileSync(FILE_POWER, String(POWER["OFF"])));
+process.on('SIGINT', () => writeFileSync(FILE_POWER, String(POWER["OFF"])));
 
 export async function startDistanceSensor() {
   console.log("初期化: 測距センサー");
@@ -77,8 +79,8 @@ export async function startDistanceSensor() {
 
 async function watchDistance() {
   while (true) {
-    // TODO: 下向きの時だけ判定
     let distance = await getDistance();
+    if (direction !== "up") continue;
 
     if (distance < 100) {
       currentNote = 0;
@@ -98,8 +100,11 @@ async function watchDistance() {
 
 async function playSound() {
   while (true) {
-    // TODO: 下向きの時だけ判定
     await sleep(100);
+    if (direction !== "up") {
+      stopSpeaker();
+      continue;
+    }
 
     switch (currentNote) {
       case 1: {
@@ -129,8 +134,9 @@ async function playSound() {
 async function watchShortPress() {
   let notesArrayPointer = 0;
   while (true) {
-    // TODO: 下向きの時だけ判定
     if (await buttonPressed() === 'short') {
+      if (direction !== "up") continue;
+
       controller.notes[notesArrayPointer] = currentNote;
       notesArrayPointer += 1;
       notesArrayPointer %= controller.notes.length;

@@ -6,6 +6,7 @@ import { buttonPressed, initButton } from "./modules/gpio/button.js";
 import { initWebsocket, sendRequest } from "./modules/websocket.js";
 import { startDistanceSensor } from "./modules/gpio/distanseSpeaker.js";
 import { initGPIO } from "./modules/gpio/index.js";
+import { startDirectionSensor } from "./modules/gpio/direction.js";
 
 /**
  * @typedef {import("./modules/common").ControllerData} ControllerData
@@ -16,10 +17,7 @@ async function main() {
     await becomeChildren(); // みんな最初はこども
 
     while (true) {
-        if (await buttonPressed() === "short") {
-            // TODO: 音階の決定
-            continue;
-        };
+        if (await buttonPressed() === "short") continue;
 
         await becomeParent();
 
@@ -54,7 +52,7 @@ async function init() {
     ]);
 
     startDistanceSensor();
-    // startDirectionSensor();
+    startDirectionSensor();
 
     console.log("初期化が完了");
 }
