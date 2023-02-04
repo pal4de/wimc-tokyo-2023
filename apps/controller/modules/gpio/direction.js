@@ -26,9 +26,9 @@ export async function startDirectionSensor() {
     try {
       const data = await mpu6050.readAll();
 
-      const accel = [data.gx, data.gy, data.gz];
-      // const gyro = [data.rx, data.ry, data.rz];
-      const value_direction = Math.atan2(accel[0], accel[2]) * 1000 * Math.PI / 90;
+      const gyro = [data.gx, data.gy, data.gz];
+      // const accel = [data.rx, data.ry, data.rz];
+      const value_direction = Math.atan2(gyro[0], gyro[2]) * 1000 * Math.PI / 90;
       if (-30 <= value_direction && value_direction <= 30) { // TODO: 全体が完成し次第、値の調整
         direction = "down";
       } else if (30 < value_direction && value_direction < 75) {
