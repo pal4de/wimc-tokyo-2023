@@ -93,17 +93,9 @@ function displayMessage(msg) {
 
 // 現在日時を取得する関数
 function getNow() {
-	var now = new Date();
-	var year = now.getFullYear();
-	var mon = now.getMonth()+1; //１を足すこと
-	var day = now.getDate();
-	var hour = now.getHours();
-	var min = now.getMinutes();
-	var sec = now.getSeconds();
-
-	//出力用
-	var s = year + "/" + mon + "/" + day + " " + hour + ":" + min + ":" + sec;
-	return s;
+  var date = new Date();
+  var datetime = date.getFullYear() + '/' + ('0' + (date.getMonth() + 1)).slice(-2) + '/' +('0' + date.getDate()).slice(-2) + ' ' +  ('0' + date.getHours()).slice(-2) + ':' + ('0' + date.getMinutes()).slice(-2) + ':' + ('0' + date.getSeconds()).slice(-2);
+	return datetime;
 }
 
 // ローカルストレージへの保存関数
