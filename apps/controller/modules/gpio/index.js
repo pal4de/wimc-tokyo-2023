@@ -15,7 +15,6 @@ export async function getI2CPort(key = 1) {
     const i2cAccess = await requestI2CAccess();
     const port = i2cAccess.ports.get(key);
     if (!port) throw new Error("I2Cポートへのアクセスが取得できません");
-    console.log(port)
     return port;
 }
 
