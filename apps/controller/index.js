@@ -2,7 +2,7 @@
 
 import { controller, initCommon, sleep } from "./modules/common.js";
 import { becomeChildren, becomeParent, getChildCommand, getChildren, initBluetooth, notifyOrder } from "./modules/bluetooth.js";
-import { buttonPressed, initButton } from "./modules/gpio/button.js";
+import { buttonEventEmitter, initButton, watchButton } from "./modules/gpio/button.js";
 import { initWebsocket, sendRequest } from "./modules/websocket.js";
 import { startDistanceSensor } from "./modules/gpio/distanseSpeaker.js";
 import { initGPIO } from "./modules/gpio/index.js";
@@ -16,9 +16,7 @@ async function main() {
     await init();
     await becomeChildren(); // みんな最初はこども
 
-    while (true) {
-        if (await buttonPressed() === "short") continue;
-
+    buttonEventEmitter.on('pressedLong', async () => {
         await becomeParent();
 
         await sleep(7000);
@@ -37,7 +35,11 @@ async function main() {
         ]);
 
         await becomeChildren();
-    }
+    })
+
+    buttonEventEmitter.on('pressedShort', () => {
+        console.debug(controller);
+    })
 }
 
 /** 初期化 */
@@ -51,6 +53,7 @@ async function init() {
         initBluetooth(),
     ]);
 
+    watchButton();
     startDistanceSensor();
     startDirectionSensor();
 

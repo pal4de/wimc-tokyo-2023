@@ -5,7 +5,7 @@ import childProsess from 'child_process';
 import { promises as fs, writeFileSync } from 'fs';
 import { promisify } from 'util';
 import { controller, sleep } from "../common.js";
-import { buttonPressed } from './button.js';
+import { buttonEventEmitter } from "./button.js";
 import { direction } from "./direction.js";
 import { i2cPort } from "./index.js";
 
@@ -73,8 +73,16 @@ export async function startDistanceSensor() {
 
   // 並行実行
   watchDistance();
-  watchShortPress();
   playSound();
+
+  let notesArrayPointer = 0;
+  buttonEventEmitter.on('pressedShort', () => {
+    if (direction !== "up") return;
+
+    controller.notes[notesArrayPointer] = currentNote;
+    notesArrayPointer += 1;
+    notesArrayPointer %= controller.notes.length;
+  })
 }
 
 async function watchDistance() {
@@ -127,19 +135,6 @@ async function playSound() {
         stopSpeaker();
         break;
       }
-    }
-  }
-}
-
-async function watchShortPress() {
-  let notesArrayPointer = 0;
-  while (true) {
-    if (await buttonPressed() === 'short') {
-      if (direction !== "up") continue;
-
-      controller.notes[notesArrayPointer] = currentNote;
-      notesArrayPointer += 1;
-      notesArrayPointer %= controller.notes.length;
     }
   }
 }

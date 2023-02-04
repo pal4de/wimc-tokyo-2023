@@ -1,8 +1,12 @@
 //@ts-check
 
-import { buttonPressed, initGPIO } from "./button.js";
+import { buttonEventEmitter, initButton, watchButton } from "./button.js";
+import { initGPIO } from "./index.js";
 
 await initGPIO();
-while (true) {
-    console.log(await buttonPressed());
-}
+await initButton();
+
+buttonEventEmitter.on("pressed", type => {
+    console.log(type);
+})
+watchButton();
