@@ -8,6 +8,7 @@ import {RelayServer} from "./RelayServer.js";
 
 var channel;
 var gpioPort0;
+let result;
 
 async function connect(){
 	// GPIOポート0の初期化
@@ -18,15 +19,19 @@ async function connect(){
 
 	// webSocketリレーの初期化
 	var relay = RelayServer("chirimentest", "chirimenSocket" , nodeWebSocketLib, "https://chirimen.org");
-	channel = await relay.subscribe("controllerYUKI");
+	channel = await relay.subscribe("controllerCourage");
 	console.log("web socketリレーサービスに接続しました");
 	gpioPort0.onchange=testChange; // ISSUE gpioのonchangeの仕様が異なる
 }
 
 function testChange(val){
 	var msgTxt = (val.value === 1 ) ? "High" : "Low"; // 条件 (三項) 演算子
-	console.log(msgTxt);
-	channel.send(msgTxt);
+  result = {
+    "スイッチ": msgTxt,
+    "データ": 0
+  }
+	console.log(result);
+	channel.send(result);
 }
 
 
