@@ -14,7 +14,11 @@ async function main() {
     await becomeChildren(); // みんな最初はこども
 
     while (true) {
-        await buttonPressed();
+        if (await buttonPressed() === "short") {
+            // TODO: 音階の決定
+            continue;
+        };
+
         await becomeParent();
 
         await sleep(7000);
