@@ -1,6 +1,6 @@
 // ジャイロセンサーからコントローラーの向きを判別する。
-import {requestGPIOAccess} from "./node_modules/node-web-gpio/dist/index.js";
-import {requestI2CAccess} from "./node_modules/node-web-i2c/index.js";
+import { requestGPIOAccess } from "./node_modules/node-web-gpio/dist/index.js";
+import { requestI2CAccess } from "./node_modules/node-web-i2c/index.js";
 import MPU6050 from "@chirimen/mpu6050";
 
 const sleep = msec => new Promise(resolve => setTimeout(resolve, msec));
@@ -36,9 +36,9 @@ async function checkRotation() {
   await mpu6050.init();
   const data = await mpu6050.readAll();
   const accel = [data.gx, data.gy, data.gz];
-  const gyro =[data.rx, data.ry, data.rz];
+  const gyro = [data.rx, data.ry, data.rz];
   const value_direction = Math.atan2(accel[0], accel[2]) * 1000 * Math.PI / 90;
-  if (-30 <= value_direction && value_direction <= 30) {
+  if (-30 <= value_direction && value_direction <= 30) { // TODO: 全体が完成し次第、値の調整
     direction = "up";
   } else if (30 < value_direction && value_direction < 75) {
     direction = "left";

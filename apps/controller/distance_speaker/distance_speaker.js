@@ -1,12 +1,11 @@
 // return: 0:無音,1:低音,2:中低音,3:中高音,4:高音
-import {requestI2CAccess} from "./node_modules/node-web-i2c/index.js";
-import {requestGPIOAccess} from "./node_modules/node-web-gpio/dist/index.js";
 import VL53L0X from "@chirimen/vl53l0x";
-import fs from 'fs';
 import child_process from 'child_process';
-import { networkInterfaces } from "os";
+import fs from 'fs';
+import { requestGPIOAccess } from "node-web-gpio/dist/index.js";
+import { requestI2CAccess } from "node-web-i2c/index.js";
 
-const {exec} = child_process;
+const { exec } = child_process;
 const sleep = msec => new Promise(resolve => setTimeout(resolve, msec));
 
 // 周波数リスト(Hz)
@@ -76,15 +75,15 @@ export async function distance_speaker() {
       }
     } else {
       distance = await getDistance();
-      if (Number(distance) < 300) {
+      if (Number(distance) < 100) {
         stopSpeaker();
-      } else if (300 <= Number(distance) && Number(distance) < 600) {
+      } else if (Number(distance) < 200) {
         stopSpeaker();
         startSpeaker(FREQ["ド"]);
-      } else if (600 <= Number(distance) && Number(distance) < 900) {
+      } else if (Number(distance) < 300) {
         stopSpeaker();
         startSpeaker(FREQ["ミ"]);
-      } else if (900 <= Number(distance) && Number(distance) < 1200) {
+      } else if (Number(distance) < 400) {
         stopSpeaker();
         startSpeaker(FREQ["ソ"]);
       } else {
@@ -127,22 +126,22 @@ async function setSpeakerConfig(file, value) {
 async function setPWM() {
   await exec('sudo dtoverlay pwm-2chan pin=' + PIN_PWM["1"] + ' func=4 pin2=' + PIN_PWM["2"] + ' func2=4', (error) => {
     if (error) {
-        console.error(`exec error: ${error}`);
-        return;
+      console.error(`exec error: ${error}`);
+      return;
     }
   })
   await sleep(1000);
   await exec('sudo echo 0 > ' + FILE_PWM, (error) => {
     if (error) {
-        console.error(`exec error: ${error}`);
-        return;
+      console.error(`exec error: ${error}`);
+      return;
     }
   })
   sleep(1000);
   await exec('sudo echo 1 > ' + FILE_PWM, (error) => {
     if (error) {
-        console.error(`exec error: ${error}`);
-        return;
+      console.error(`exec error: ${error}`);
+      return;
     }
   })
 }
