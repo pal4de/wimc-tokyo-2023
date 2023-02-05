@@ -1,8 +1,8 @@
 //@ts-check
 
 import Max7219 from "max7219-display";
-import { order } from "../common.js";
-import { currentNotes, notesArrayPointer } from "./distanseSpeaker.js";
+import { controller, order } from "../common.js";
+import { currentNotes, isBuzzering, notesArrayPointer } from "./distanseSpeaker.js";
 
 /**
  * @typedef {"loading" | "order" | "playlistPreset"} DisplayMode
@@ -42,7 +42,7 @@ export async function initLed() {
                 break;
             }
             case "playlistPreset": {
-                const n = currentNotes;
+                const n = isBuzzering ? currentNotes : controller.notes;
                 const ptn = [
                     [n[0] === 4, n[0] === 4, n[1] === 4, n[1] === 4, n[2] === 4, n[2] === 4, n[3] === 4, n[3] === 4],
                     [n[0] === 4, n[0] === 4, n[1] === 4, n[1] === 4, n[2] === 4, n[2] === 4, n[3] === 4, n[3] === 4],
@@ -57,7 +57,7 @@ export async function initLed() {
                     [n[0] === 1, n[0] === 1, n[1] === 1, n[1] === 1, n[2] === 1, n[2] === 1, n[3] === 1, n[3] === 1],
                 ];
 
-                if (frame % 16 < 8) {
+                if (isBuzzering && frame % 16 < 8) {
                     ptn[0][notesArrayPointer * 2] = false;
                     ptn[0][notesArrayPointer * 2 + 1] = false;
                     ptn[1][notesArrayPointer * 2] = false;
