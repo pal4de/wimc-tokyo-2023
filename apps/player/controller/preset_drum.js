@@ -12,10 +12,10 @@ export class PresetDrum {
         this.patterns = [];
 
         // init drum patterns
-        this.patterns[1] = [1, 2, 2, 1];
-        this.patterns[2] = [1, 2, 1, 2];
-        this.patterns[3] = [1, 2, 2, 1];
-        this.patterns[4] = [2, 2, 1, 1];
+        this.patterns[0] = [1, 2, 2, 1];
+        this.patterns[1] = [1, 2, 1, 2];
+        this.patterns[2] = [1, 2, 2, 1];
+        this.patterns[3] = [2, 2, 1, 1];
     }
 
     /**
