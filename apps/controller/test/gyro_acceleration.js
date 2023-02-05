@@ -1,5 +1,5 @@
-import { requestGPIOAccess } from "node-web-gpio/dist/index.js.js";
-import { requestI2CAccess } from "node-web-i2c/index.js.js";
+import { requestGPIOAccess } from "node-web-gpio";
+import { requestI2CAccess } from "node-web-i2c";
 import MPU6050 from "@chirimen/mpu6050";
 const sleep = msec => new Promise(resolve => setTimeout(resolve, msec));
 

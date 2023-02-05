@@ -1,4 +1,4 @@
-import { requestI2CAccess } from "node-web-i2c/index.js.js";
+import { requestI2CAccess } from "node-web-i2c";
 import VL53L0X from "@chirimen/vl53l0x";
 
 const sleep = msec => new Promise(resolve => setTimeout(resolve, msec));
