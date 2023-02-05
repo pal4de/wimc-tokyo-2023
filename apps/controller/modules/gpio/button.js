@@ -7,7 +7,7 @@ import { EventEmitter } from 'events';
  * @typedef {"long" | "short"} ButtonPressType
  */
 
-const gpioPortNum = 5;
+const gpioPortNum = 4;
 const threshold = 700;
 
 /** @type {import("node-web-gpio").GPIOPort} */
