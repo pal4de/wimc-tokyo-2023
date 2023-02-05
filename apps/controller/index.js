@@ -19,17 +19,17 @@ async function main() {
     startDirectionSensor();
 
     await becomeChildren(); // みんな最初はこども
+    setDisplayMode("playlistPreset")
 
     buttonEventEmitter.on('pressedLong', async () => {
         await becomeParent();
-
-        // TODO: 動作確認としてだけ
-        setDisplayMode("order");
-        setOrder(((order ?? 0) + 1) % 4)
+        setDisplayMode("loading");
 
         await sleep(7000);
         const children = await getChildren();
         await notifyOrder(children);
+        setDisplayMode("order");
+        setTimeout(() => setDisplayMode("playlistPreset"), 5000);
 
         const childrenCommandsPms = children
             .map(async (node) => await getChildCommand(node))
@@ -52,8 +52,9 @@ async function main() {
 
 /** 初期化 */
 async function init() {
+    await initLed();
+
     await Promise.all([
-        initLed(),
         initCommon(),
         initButton(),
         initWebsocket(),
