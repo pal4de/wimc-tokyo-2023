@@ -252,7 +252,8 @@ table td{
 }
 
 #history{
-    display: none;
+  padding-top: 10%;
+  display: none;
 }
 
 
