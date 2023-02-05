@@ -1,12 +1,18 @@
-import { TEMPO } from '../const.js'
+import { TEMPO, PATH } from '../util/const.js'
 
 export class PresetCode {
+    /**
+     * @param {WavPlayer} player 
+     * @param {number} code 
+     * @param {number} notes 
+     */
     constructor(player, code, notes) {
         this.player = player
         this.code = code;
         this.notes = notes;
         this.pitches = [];
 
+        // init code pitches
         if (code == "C") {
             this.pitches = ["", "C5", "E5", "G5", "B5"];
         } else if (code == "Dm") {
@@ -19,26 +25,27 @@ export class PresetCode {
     }
 
     get basePath() {
-        return `./music/Ba${this.code}1.wav`; 
+        return PATH + `Ba${this.code}1.wav`;
     }
 
     get codePath() {
-        return `./music/${this.code}.wav`;
+        return PATH + `${this.code}.wav`;
     }
 
+    /**
+     * @param {string} note 
+     */
     getSoundPath(note) {
-        return `./music/Glo${note}.wav`;
-    }
-
-    get sound() {
-        return this.pitches[this.note];
+        return PATH + `Glo${note}.wav`;
     }
 
     async play() {
+        // コード音再生
         this.player.play({
             path: this.codePath,
         });
 
+        // 小節の4音をtempoで指定した時間を空けて再生する
         for (let note of this.notes) {
             if (note === 0) {
                 await new Promise((resolve) => {
@@ -50,19 +57,22 @@ export class PresetCode {
 
                 continue;
             }
+
             note = this.pitches[note];
 
             await new Promise((resolve) => {
                 setTimeout(() => {
                     this.player.play({
                         path: this.getSoundPath(note),
-                        // sync: true,
                     });
+                    // 追加でbase音も一緒に再生する
                     this.player.play({
                         path: this.basePath,
                     });
+
                     console.log('📣 play note sound :', this.getSoundPath(note));
                     console.log('📣 play base sound :', this.basePath);
+
                     resolve();
                 }, TEMPO);
             });
