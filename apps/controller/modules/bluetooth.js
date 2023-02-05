@@ -100,6 +100,7 @@ export async function becomeParent() {
 
     console.log("親機になりました");
     setIsParent(true);
+    setOrder(1);
     // ほかにも親機がいないかチェックしてもいいかも
 
     bleno.stopAdvertising();

@@ -1,7 +1,8 @@
 //@ts-check
 
 import Max7219 from "max7219-display";
-import { order } from "../common.js";
+import { controller, order } from "../common.js";
+import { currentNotes, isBuzzering, notesArrayPointer } from "./distanseSpeaker.js";
 
 /**
  * @typedef {"loading" | "order" | "playlistPreset"} DisplayMode
@@ -25,13 +26,14 @@ export function setDisplayMode(newMode) {
     displayMode = newMode
 }
 
-export function initLed() {
-    let i = 0;
+export async function initLed() {
+    await displayDriver.reset(0);
+
+    let frame = 0;
     setInterval(() => {
         switch (displayMode) {
             case "loading": {
-                displayDriver.set(0, patterns.loading[i++]);
-                i %= patterns.loading.length
+                displayDriver.set(0, patterns.loading[frame % patterns.loading.length]);
                 break
             }
             case "order": {
@@ -40,11 +42,45 @@ export function initLed() {
                 break;
             }
             case "playlistPreset": {
-                displayDriver.clear(0)
-                // TODO: 実装
+                const n = isBuzzering ? currentNotes : controller.notes;
+                const ptn = [
+                    [n[0] === 4, n[0] === 4, n[1] === 4, n[1] === 4, n[2] === 4, n[2] === 4, n[3] === 4, n[3] === 4],
+                    [n[0] === 4, n[0] === 4, n[1] === 4, n[1] === 4, n[2] === 4, n[2] === 4, n[3] === 4, n[3] === 4],
+
+                    [n[0] === 3, n[0] === 3, n[1] === 3, n[1] === 3, n[2] === 3, n[2] === 3, n[3] === 3, n[3] === 3],
+                    [n[0] === 3, n[0] === 3, n[1] === 3, n[1] === 3, n[2] === 3, n[2] === 3, n[3] === 3, n[3] === 3],
+
+                    [n[0] === 2, n[0] === 2, n[1] === 2, n[1] === 2, n[2] === 2, n[2] === 2, n[3] === 2, n[3] === 2],
+                    [n[0] === 2, n[0] === 2, n[1] === 2, n[1] === 2, n[2] === 2, n[2] === 2, n[3] === 2, n[3] === 2],
+
+                    [n[0] === 1, n[0] === 1, n[1] === 1, n[1] === 1, n[2] === 1, n[2] === 1, n[3] === 1, n[3] === 1],
+                    [n[0] === 1, n[0] === 1, n[1] === 1, n[1] === 1, n[2] === 1, n[2] === 1, n[3] === 1, n[3] === 1],
+                ];
+
+                if (isBuzzering && frame % 16 < 8) {
+                    ptn[0][notesArrayPointer * 2] = false;
+                    ptn[0][notesArrayPointer * 2 + 1] = false;
+                    ptn[1][notesArrayPointer * 2] = false;
+                    ptn[1][notesArrayPointer * 2 + 1] = false;
+                    ptn[2][notesArrayPointer * 2] = false;
+                    ptn[2][notesArrayPointer * 2 + 1] = false;
+                    ptn[3][notesArrayPointer * 2] = false;
+                    ptn[3][notesArrayPointer * 2 + 1] = false;
+                    ptn[4][notesArrayPointer * 2] = false;
+                    ptn[4][notesArrayPointer * 2 + 1] = false;
+                    ptn[5][notesArrayPointer * 2] = false;
+                    ptn[5][notesArrayPointer * 2 + 1] = false;
+                    ptn[6][notesArrayPointer * 2] = false;
+                    ptn[6][notesArrayPointer * 2 + 1] = false;
+                    ptn[7][notesArrayPointer * 2] = false;
+                    ptn[7][notesArrayPointer * 2 + 1] = false;
+                }
+
+                displayDriver.set(0, ptn);
                 break;
             }
         }
+        frame++;
     }, ms);
 }
 

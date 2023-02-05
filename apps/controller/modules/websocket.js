@@ -33,7 +33,7 @@ export async function initWebsocket() {
  */
 export function sendRequest(controllers) {
     const requestId = uuid.v4();
-    const request = { requestId, controllers };
+    const request = { 'request_id': requestId, controllers };
     remoteChannel.send(JSON.stringify(request));
     console.log(`リレーサーバーに送信: ${JSON.stringify(request)}`);
 }

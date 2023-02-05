@@ -52,8 +52,15 @@ const POWER = {
 /** @type {{ getRange(): Promise<number>, init(): Promise<void> }} */
 export let vl;
 
+export let notesArrayPointer = 0;
+
 /** @type {Note} */
 let currentNote = 0;
+
+/** @type {[Note, Note, Note, Note]} */
+export let currentNotes = [0, 0, 0, 0];
+
+export let isBuzzering = false;
 
 process.on('exit', () => execSync(`echo ${POWER["OFF"]} > ${FILE_POWER}`));
 process.on('SIGINT', () => execSync(`echo ${POWER["OFF"]} > ${FILE_POWER}`));
@@ -77,7 +84,6 @@ export async function startDistanceSensor() {
   watchDistance();
   playSound();
 
-  let notesArrayPointer = 0;
   buttonEventEmitter.on('pressedShort', () => {
     if (direction !== "up") return;
 
@@ -92,7 +98,10 @@ async function watchDistance() {
     try {
       await sleep(300);
       let distance = await vl.getRange();
-      if (direction !== "up") continue;
+      if (direction !== "up") {
+        isBuzzering = false
+        continue
+      };
 
       if (distance < 100) {
         currentNote = 0;
@@ -105,6 +114,10 @@ async function watchDistance() {
       } else {
         currentNote = 4;
       }
+      currentNotes = [...controller.notes];
+      currentNotes[notesArrayPointer] = currentNote
+
+      isBuzzering = currentNote > 0;
     } catch (err) {
       // たまにミスが発生？握りつぶしちゃダメなやつかも
       // エラーが発生した後まったく成功しないなら要対応
