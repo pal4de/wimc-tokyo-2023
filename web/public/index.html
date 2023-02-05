@@ -13,19 +13,17 @@
   <body>
     <header>
       <div class="header_logo">
-        <div class="logo"><img src="./img/logo.png" alt="" width="15%">  プロダクト名</div>
+        <div class="logo"><img src="./img/logo.png" alt="" width="15%">  M3(MyMusicMaker)</div>
       </div>
       <div class="header_nav" id="header_nav">
         <ul class="navi">
-          <li id="navi1"><a href="#" onclick="navSelect(1)">コード(こーど)</a></li>
-          <li id="navi2"><a href="#" onclick="navSelect(2)">音階(おんかい)</a></li>
-          <li id="navi3"><a href="#" onclick="navSelect(3)">ドラム(どらむ)</a></li>
+          <li id="navi1"><a href="#" onclick="navSelect(1)">コード</a></li>
+          <li id="navi2"><a href="#" onclick="navSelect(2)">メロディー</a></li>
+          <li id="navi3"><a href="#" onclick="navSelect(3)">リズム</a></li>
         </ul>
       </div >
     </header>
     <div id="main">
-      <input type="button" onclick="TestSendMessage()" value="Test Send Message"></input>
-      <!-- <div id="messageDiv" ></div> -->
       <!--
       <div class="container">
           <div class="row">
@@ -39,35 +37,32 @@
       <div id="design">
         <div id="section1">
           <div class="box">
-            <img id="section1_img" src="./img/section1_img.png" alt="" width="100%">
+            <img id="section1_img" src="./img/section1.png" alt="" width="100%">
             <div class="htable"><div id="j_result1">センシングデータを取得中...</div></div>
           </div>
           <div class="sample_box11">
             <div class="sample_box11_tape"> </div>
-            <p class="sample_box11_title_s">こーど</p>
             <p class="sample_box11_title">コード</p>
           </div>
         </div>
         <div id="section2">
           <div class="box">
-            <img id="section2_img" src="./img/section2_img.png" alt="" width="80%">
+            <img id="section2_img" src="./img/section2.png" alt="" width="80%">
             <div class="htable"><div id="j_result2">センシングデータを取得中...</div></div>
           </div>
           <div class="sample_box11">
             <div class="sample_box11_tape"> </div>
-            <p class="sample_box11_title_s">おんかい</p>
-            <p class="sample_box11_title">音階</p>
+            <p class="sample_box11_title">メロディー</p>
           </div>
         </div>
         <div id="section3">
           <div class="box">
-            <img id="section2_img" src="./img/section3_img.png" alt="" width="80%">
+            <img id="section2_img" src="./img/section3.png" alt="" width="80%">
             <div class="htable"><div id="j_result3">センシングデータを取得中...</div></div>
           </div>
           <div class="sample_box11">
             <div class="sample_box11_tape"> </div>
-            <p class="sample_box11_title_s">どらむ</p>
-            <p class="sample_box11_title">ドラム</p>
+            <p class="sample_box11_title">リズム</p>
           </div>
         </div>
       </div>
@@ -76,15 +71,6 @@
     <div id="history">
       <ul class="cp_list">
         <div id="history_data">履歴データを取得中...</div>
-        <!-- <li>2023/01/20 09:30<button  class="Button-style" onclick="DisplayDetail(0)">詳細</button></li>
-        <li>2023/01/20 09:40<button  class="Button-style">詳細</button></li>
-        <li>2023/01/20 09:50<button  class="Button-style">詳細</button></li>
-        <li>2023/01/20 10:00<button  class="Button-style">詳細</button></li>
-        <li>2023/01/21 09:30<button  class="Button-style">詳細</button></li>
-        <li>2023/01/21 09:40<button  class="Button-style">詳細</button></li>
-        <li>2023/01/21 09:50<button  class="Button-style">詳細</button></li>
-        <li>2023/01/21 10:00<button  class="Button-style">詳細</button></li>
-        <li>2023/01/22 09:30<button  class="Button-style">詳細</button></li> -->
       </ul>
     </div>
 
@@ -92,6 +78,7 @@
       <div id="sp-fixed-menu" class="for-sp">
         <ul>
           <li id="footer1"><a href="#" onclick="footerSelect(0)">設計図<br>(せっけいしょ)</a></li>
+          <li id="footer3"><a href="#" onclick="footerSelect(2)">再生<br>(さいせい)</a></li>
           <li id="footer2"><a href="#" onclick="footerSelect(1)">履歴<br>(りれき)</a></li>
         </ul>
       </div>
@@ -104,7 +91,6 @@
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
-    <!-- <script type="module" src="./j_input.js"></script> -->
     <script type="module" src="./relay_server.js"></script>
     <script type="text/javascript" src="./script.js"></script>
   </body>

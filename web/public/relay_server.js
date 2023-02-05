@@ -4,6 +4,7 @@ window.TestSendMessage = testSendMessage;
 window.DisplayDetail = displayDetail;
 window.DisplayHistory = displayHistory;
 window.PlayHistoryMusic = playHistoryMusic;
+window.SendMessage = sendMessage;
 
 let channel_controller;
 let channel_player;
@@ -12,6 +13,7 @@ let j_result2;
 let j_result3;
 let history_data;
 let historyList;
+let now_data;
 
 onload = async function(){
 	// webSocketリレーの初期化
@@ -33,62 +35,63 @@ function getMessage(msg) {
 	console.log("mdata(受信):", mdata);
   mdata.datetime = getNow();
   console.log(getNow())
-  sendMessage(mdata);
-  displayMessage(mdata);
-  saveLocalStorage(mdata);
+  setNowData(mdata);
+  sendMessage(now_data);
+  displayMessage(now_data);
+  saveLocalStorage(now_data);
+}
+
+// 選択データを設定する関数
+function setNowData(msg) {
+  now_data = msg;
 }
 
 // メッセージを送信するときに起動する関数
-function sendMessage(msg) {
-  // channel_player.send(msg);
-	console.log("mdata(送信):", msg);
+function sendMessage() {
+  // channel_player.send(now_data);
+	console.log("mdata(送信):", now_data);
 }
 
 // Webアプリへの値表示関数
-function displayMessage(msg) {
-  let count = 0;
-  let count_notes = 0;
-
-  //距離
-  let html1 = "<table>";
-  //html1 += "<caption>" + data.caption + "</caption>";
-  for(let command of msg.controllers){
-    //html1 += "<tr><th>" + command.command + "</th><td>" + command.value.v1 + "</td></tr>";
-    count += 1;
-    html1 += "<tr><th>" + count + "</th><td>"+ command.playlist_preset + "</td></tr>";
-  }
-
-  html1 += "</table>";
-  //html1 += "<p>ぜんぶで" + msg.controllers.length + "つのコントローラを使用しています";    // 要素memberの配列要素数
-  j_result1.innerHTML = html1;
-
-  //高さ
-  let html2 = "<table>";
-  count = 0;
-  //html2 += "<caption>" + data.caption + "</caption>";
-  for(let command of msg.controllers){
-    count += 1;
-    count_notes = 0;
-    for (let note of command.notes) {
-      count_notes += 1;
-      html2 += "<tr><th>" + count + "-" + count_notes + "</th><td>" + note + "</td></tr>";
+function displayMessage(data) {
+  //コード
+    let html1 = "<table>";
+    let h1_num=1;
+    //let h1Array =[];
+    //html1 += "<caption>" + data.caption + "</caption>";
+    for(let controller of data.controllers){
+        html1 += "<tr><th>" + h1_num + "小節目<th><td>" + controller.playlist_preset + "</td></tr>";
+        //h1Array.push(controller.playlist_preset);
+        h1_num++;
     }
-  }
-  html2 += "</table>";
-  //html2 += "<p>ぜんぶで" + msg.controllers.length + "つのコントローラを使用しています";    // 要素memberの配列要素数
-  j_result2.innerHTML = html2;
 
-  //向き
-  let html3 = "<table>";
-  count = 0;
-  //html3 += "<caption>" + data.caption + "</caption>";
-  for(let command of msg.controllers){
-    count += 1;
-    html3 += "<tr><th>" + count + "</th><td>" + command.drum_pattern + "</td></tr>";
-  }
-  html3 += "</table>";
-  //html3 += "<p>ぜんぶで" + msg.controllers.length + "つのコントローラを使用しています";    // 要素memberの配列要素数
-  j_result3.innerHTML = html3;
+    html1 += "</table>";
+    //html1 += "<p>ぜんぶで" + data.commands.length + "つのコントローラを使用しています";    // 要素memberの配列要素数
+    j_result1.innerHTML = html1;
+
+    //つまみ
+    let html2 = "<table>";
+    let h2_num=1;
+    //html2 += "<caption>" + data.caption + "</caption>";
+    for(let controller of data.controllers){
+        html2 += "<tr><th>" + h2_num + "小節目</th><td>" + controller.notes[0] + ",</td><td>" + controller.notes[1] + ",</td><td>" + controller.notes[2] + ",</td><td>" + controller.notes[3] + "</td></tr>";
+        h2_num++;
+    }
+    html2 += "</table>";
+    //html2 += "<p>ぜんぶで" + data.commands.length + "つのコントローラを使用しています";    // 要素memberの配列要素数
+    j_result2.innerHTML = html2;
+
+    //リズム
+    let html3 = "<table>";
+    let h3_num=1;
+    //html3 += "<caption>" + data.caption + "</caption>";
+    for(let controller of data.controllers){
+        html3 += "<tr><th>" + h3_num + "小節目</th><td>" + "パターン：" + controller.drum_pattern + "</td></tr>";
+        h3_num++;
+    }
+    html3 += "</table>";
+    //html3 += "<p>ぜんぶで" + data.commands.length + "つのコントローラを使用しています";    // 要素memberの配列要素数
+    j_result3.innerHTML = html3;
 }
 
 // 現在日時を取得する関数
@@ -125,7 +128,9 @@ function displayHistory() {
   let html = "";
   historyList = getListLocalStorage();
   let count = 0;
+  let num = 0;
   for(let history of historyList){
+    num++;
     html += "<li>" + history.datetime + "<button class=\"Button-style\" onclick=\"DisplayDetail(" + count + ")\">詳細</button><button class=\"Button-style\" onclick=\"PlayHistoryMusic(" + count + ")\">再生</button></li>";
     count++;
   }
@@ -136,6 +141,7 @@ function displayHistory() {
 function displayDetail(num) {
   footerSelect(0);  // 設計書画面に遷移
   displayMessage(historyList[num]);
+  setNowData(historyList[num]);
 }
 
 // 履歴再生関数

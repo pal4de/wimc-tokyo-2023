@@ -28,7 +28,7 @@ async function connect(){
 function sendMessage(val){
   // if (val.value === 0) {
   msg = {
-    "request_id": "1b9d6bcd-bbfd-4b2d-9b5d-ab8dfbbd4bcd",
+    "request_id": "1b9d6bcd-bbfd-4b2d-9b5d-ab8dfbbd4bab",
     "controllers": [
       {
         "bt_address": "34-22-79-74-B1-92",
@@ -39,7 +39,7 @@ function sendMessage(val){
           4
         ], // 0: 無音, 1: 低音, 2: 中低音, ...
         "drum_pattern": 1, // 1, 2: dramパターン
-        "playlist_preset": "Dm" // "G7", "C", "Dm", "F": コントローラー固有のコード
+        "playlist_preset": "F" // "G7", "C", "Dm", "F": コントローラー固有のコード
       },
       {
         "bt_address": "15-EE-B4-96-8D-A9",
@@ -50,7 +50,7 @@ function sendMessage(val){
           3
         ],
         "drum_pattern": 2,
-        "playlist_preset": "F"
+        "playlist_preset": "Dm"
       },
       {
         "bt_address": "57-C5-D6-EC-12-17",

@@ -228,13 +228,13 @@ table tr:last-child{
 table th{
     position: relative;
     text-align: center;
-    width: 30%;
     background-color: #153692;
     color: white;
     text-align: center;
     padding: 2px 0;
 }
 
+/*
 table th:after{
     display: block;
     content: "";
@@ -247,10 +247,10 @@ table th:after{
     border-top: 10px solid transparent;
     border-bottom: 10px solid transparent;
 }
+*/
 
 table td{
     text-align: center;
-    width: 70%;
     text-align: center;
     background-color: #eee;
     padding: 2px 0;
@@ -348,4 +348,16 @@ ul.cp_list li::before {
     border: none;
     cursor: pointer;
     margin-left:10%;
+}
+
+#footer1{
+    background-color: #DE6C31;
+}
+
+#footer2{
+    background-color: #989898;
+}
+
+#footer3{
+    background-color: #FED500;
 }
