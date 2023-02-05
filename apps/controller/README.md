@@ -9,6 +9,12 @@ sudo npm install -g pnpm
 echo 'dtoverlay=pwm-2chan,pin=12,func=4,pin2=13,func2=4' | sudo tee /boot/config.txt -a
 ```
 
+### デプロイ方法
+
+```sh
+node bin/deploy.js -t IPアドレス -i
+```
+
 ### 実行方法
 
 ```:bash
