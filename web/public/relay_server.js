@@ -31,7 +31,7 @@ onload = async function(){
 
 // メッセージを受信したときに起動する関数
 function getMessage(msg) {
-	let mdata = msg.data;
+	let mdata = JSON.parse(JSON.stringify(msg.data));
 	console.log("mdata(受信):", mdata);
   mdata.datetime = getNow();
   console.log(getNow())
@@ -48,7 +48,7 @@ function setNowData(msg) {
 
 // メッセージを送信するときに起動する関数
 function sendMessage() {
-  // channel_player.send(now_data);
+  channel_player.send(now_data);
 	console.log("mdata(送信):", now_data);
 }
 
@@ -131,7 +131,7 @@ function displayHistory() {
   let num = 0;
   for(let history of historyList){
     num++;
-    html += "<li>" + history.datetime + "<button class=\"Button-style\" onclick=\"DisplayDetail(" + count + ")\">詳細</button><button class=\"Button-style\" onclick=\"PlayHistoryMusic(" + count + ")\">再生</button></li>";
+    html += "<li onclick=\"DisplayDetail(" + count + ")\">" + history.datetime + "<button class=\"Button-style\" onclick=\"PlayHistoryMusic(" + count + ")\">再生</button></li>";
     count++;
   }
   history_data.innerHTML = html;

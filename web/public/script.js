@@ -53,6 +53,7 @@ function footerSelect(fnum){
       document.getElementById("design").style.display ="block";
       document.getElementById("history").style.display ="none";
       document.getElementById("header_nav").style.display ="block";
+      document.getElementById("history_nav").style.display ="none";
       before_num = 0;
     } else if(f_num==1){
       $f1.style.background = "#989898";
@@ -61,10 +62,12 @@ function footerSelect(fnum){
       document.getElementById("design").style.display ="none";
       document.getElementById("history").style.display ="block";
       document.getElementById("header_nav").style.display ="none";
+      document.getElementById("history_nav").style.display ="block";
       DisplayHistory();
       before_num = 1;
     } else if(f_num==2){
       if (before_num == 0) {
+        document.getElementById("history_nav").style.display ="none";
         $f1.style.background = "#DE6C31";
         $f2.style.background = "#989898";
         $f3.style.background = "#FED500";
