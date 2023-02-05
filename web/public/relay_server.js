@@ -31,10 +31,9 @@ onload = async function(){
 
 // メッセージを受信したときに起動する関数
 function getMessage(msg) {
-	let mdata = JSON.parse(JSON.stringify(msg.data));
+	let mdata = JSON.parse(msg.data);
 	console.log("mdata(受信):", mdata);
   mdata.datetime = getNow();
-  console.log(getNow())
   setNowData(mdata);
   sendMessage(now_data);
   displayMessage(now_data);
