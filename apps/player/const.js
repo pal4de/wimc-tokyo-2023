@@ -1,0 +1,1 @@
+export const TEMPO = 700;

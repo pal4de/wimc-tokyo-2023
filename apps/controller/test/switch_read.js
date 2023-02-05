@@ -1,4 +1,4 @@
-import {requestGPIOAccess} from "./node_modules/node-web-gpio/dist/index.js";
+import { requestGPIOAccess } from "node-web-gpio";
 const sleep = msec => new Promise(resolve => setTimeout(resolve, msec));
 const gpioAccess = await requestGPIOAccess();
 const port5 = gpioAccess.ports.get(5);
