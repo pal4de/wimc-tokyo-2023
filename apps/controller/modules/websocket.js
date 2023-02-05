@@ -29,11 +29,11 @@ export async function initWebsocket() {
 /**
  * リレーサーバーにリクエストを送る
  * 
- * @param {import("./common").ControllerData[]} commands 
+ * @param {import("./common").ControllerData[]} controllers 
  */
-export function sendRequest(commands) {
+export function sendRequest(controllers) {
     const requestId = uuid.v4();
-    const request = { requestId, commands };
+    const request = { requestId, controllers };
     remoteChannel.send(JSON.stringify(request));
     console.log(`リレーサーバーに送信: ${JSON.stringify(request)}`);
 }
