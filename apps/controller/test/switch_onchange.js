@@ -1,4 +1,4 @@
-import {requestGPIOAccess} from "./node_modules/node-web-gpio/dist/index.js";
+import { requestGPIOAccess } from "node-web-gpio";
 const sleep = msec => new Promise(resolve => setTimeout(resolve, msec));
 
 async function switchCheck() {
@@ -9,7 +9,7 @@ async function switchCheck() {
   port.onchange = showPort;
 }
 
-function showPort(ev){
+function showPort(ev) {
   if (ev.value == 0) {
     console.log("ON");
   } else {
