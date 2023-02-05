@@ -25,7 +25,9 @@ export function setDisplayMode(newMode) {
     displayMode = newMode
 }
 
-export function initLed() {
+export async function initLed() {
+    await displayDriver.reset(0);
+
     let i = 0;
     setInterval(() => {
         switch (displayMode) {
