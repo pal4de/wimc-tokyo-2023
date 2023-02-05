@@ -1,5 +1,5 @@
 import { TEMPO, PATH } from '../util/const.js'
-``
+
 export class PresetCode {
     /**
      * @param {WavPlayer} player 
