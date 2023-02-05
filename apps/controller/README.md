@@ -5,6 +5,7 @@ sudo setcap cap_net_raw+eip $(eval readlink -f `which node`) # nodeにbluetooth�
 sudo apt -y update
 sudo apt -y install python2 bluetooth bluez libbluetooth-dev libudev-dev
 sudo npm install -g pnpm
+echo 'dtoverlay=pwm-2chan,pin=12,func=4,pin2=13,func2=4' | sudo tee /boot/config.txt -a
 ```
 
 ### 実行方法

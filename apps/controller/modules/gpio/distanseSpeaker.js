@@ -1,7 +1,7 @@
 //@ts-check
 
 import VL53L0X from "@chirimen/vl53l0x";
-import childProsess from 'child_process';
+import childProsess, { execSync } from 'child_process';
 import { promises as fs, writeFileSync } from 'fs';
 import { OperationError } from "node-web-i2c";
 import { promisify } from 'util';
@@ -55,8 +55,8 @@ export let vl;
 /** @type {Note} */
 let currentNote = 0;
 
-process.on('exit', () => writeFileSync(FILE_POWER, String(POWER["OFF"])));
-process.on('SIGINT', () => writeFileSync(FILE_POWER, String(POWER["OFF"])));
+process.on('exit', () => execSync(`echo ${POWER["OFF"]} > ${FILE_POWER}`));
+process.on('SIGINT', () => execSync(`echo ${POWER["OFF"]} > ${FILE_POWER}`));
 
 export async function initDistanceSensor() {
   console.log("初期化: 測距センサー");
@@ -68,8 +68,7 @@ export async function initDistanceSensor() {
   try {
     await exec('ls /sys/class/pwm/pwmchip0 | grep pwm1');
   } catch (error) {
-    console.error("PWM初期化中のエラー:", error);
-    await setPWM();
+    await setupPWM();
   }
 }
 
@@ -157,34 +156,38 @@ async function startSpeaker(freq) {
   const PERIOD = Math.floor(1000000000 / freq);
   // パルス幅(nsec)
   const PWIDTH = Math.floor(PERIOD / 2);
-  // 周期設定
-  await fs.writeFile(FILE_PERIOD, String(PERIOD));
 
   // パルス幅設定
   await fs.writeFile(FILE_PWIDTH, String(PWIDTH));
+  await sleep(10);
+
+  // 周期設定
+  await fs.writeFile(FILE_PERIOD, String(PERIOD));
+  await sleep(10);
 
   // 出力開始
-  await sleep(10);
   await fs.writeFile(FILE_POWER, String(POWER["ON"]));
+  await sleep(10);
 }
 
 // スピーカー出力停止関数
 async function stopSpeaker() {
   // 出力停止
   await fs.writeFile(FILE_POWER, String(POWER["OFF"]));
+  await sleep(10);
 }
 
 // PWM有効化関数
-async function setPWM() {
-  await exec('sudo dtoverlay pwm-2chan pin=' + PIN_PWM["1"] + ' func=4 pin2=' + PIN_PWM["2"] + ' func2=4')
-  console.log('sudo dtoverlay pwm-2chan pin=' + PIN_PWM["1"] + ' func=4 pin2=' + PIN_PWM["2"] + ' func2=4')
+async function setupPWM() {
+  await fs.writeFile(FILE_PWM, '0');
   await sleep(10);
 
-  await exec('sudo echo 0 > ' + FILE_PWM)
-  console.log('sudo echo 0 > ' + FILE_PWM)
+  await fs.writeFile(FILE_PWM, '1');
   await sleep(10);
 
-  await exec('sudo echo 1 > ' + FILE_PWM)
-  console.log('sudo echo 1 > ' + FILE_PWM)
+  await fs.writeFile(FILE_PERIOD, '20000000');
+  await sleep(10);
+
+  await fs.writeFile(FILE_PWIDTH, '10000000');
   await sleep(10);
 }
