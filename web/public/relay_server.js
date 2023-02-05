@@ -98,12 +98,12 @@ function displayMessage(data) {
 function getNow() {
   var date = new Date();
   var datetime = date.getFullYear() + '/' + ('0' + (date.getMonth() + 1)).slice(-2) + '/' +('0' + date.getDate()).slice(-2) + ' ' +  ('0' + date.getHours()).slice(-2) + ':' + ('0' + date.getMinutes()).slice(-2) + ':' + ('0' + date.getSeconds()).slice(-2);
-	return datetime;
+	return String(datetime);
 }
 
 // ローカルストレージへの保存関数
 function saveLocalStorage(msg) {
-  localStorage.setItem(msg["request_id"], JSON.stringify(msg));
+  localStorage.setItem(msg.request_id, JSON.stringify(msg));
   // console.log("localStorage保存数: " + localStorage.length);
   // console.log(JSON.parse(localStorage.getItem("1b9d6bcd-bbfd-4b2d-9b5d-ab8dfbbd4bed"))["request_id"]);
 }
