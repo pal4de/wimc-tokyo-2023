@@ -20,7 +20,7 @@ export async function initWebsocket() {
     const RelayServiceName = `chirimentest`;
     const relay = RelayServer(RelayServiceName, `chirimenSocket`, nodeWebSocketLib, `https://chirimen.org`);
     if (relay) {
-        remoteChannel = await relay.subscribe();
+        remoteChannel = await relay.subscribe("controllerCourage");
     } else {
         throw new Error(`リレーサーバーとの接続の初期化に失敗`)
     }
