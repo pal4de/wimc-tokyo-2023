@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link href="style.css" rel="stylesheet" type="text/css" media="all">
+    <title>WebIoTハッカソン　チーム：勇気</title>
+  </head>
+  <body>
+    <header>
+      <div class="header_logo">
+        <div class="logo"><img src="./img/logo.png" alt="" width="15%">  プロダクト名</div>
+      </div>
+      <div class="header_nav" id="header_nav">
+        <ul class="navi">
+          <li id="navi1"><a href="#" onclick="navSelect(1)">距離(きょり)</a></li>
+          <li id="navi2"><a href="#" onclick="navSelect(2)">つまみ</a></li>
+          <li id="navi3"><a href="#" onclick="navSelect(3)">角度(かくど)</a></li>
+        </ul>
+      </div >
+    </header>
+    <div id="main">
+      <!--
+      <div class="container">
+          <div class="row">
+              <div class="col-xs-6 col-lg-4">テスト1</div>
+              <div class="col-xs-6 col-lg-4">テスト2</div>
+              <div class="col-xs-12 col-lg-4">テスト3</div>
+          </div>
+      </div>
+      -->
+
+      <div id="design">
+        <div id="section1">
+          <div class="box">
+            <img id="section1_img" src="./img/section1_img.png" alt="" width="100%">
+            <div class="htable"><div id="j_result1">JSONデータを取得中...</div></div>
+          </div>
+          <div class="sample_box11">
+            <div class="sample_box11_tape"> </div>
+            <p class="sample_box11_title_s">きょり</p>
+            <p class="sample_box11_title">距離</p>
+          </div>
+        </div>
+        <div id="section2">
+          <div class="box">
+            <img id="section2_img" src="./img/section2_img.png" alt="" width="80%">
+            <div class="htable"><div id="j_result2">JSONデータを取得中...</div></div>
+          </div>
+          <div class="sample_box11">
+            <div class="sample_box11_tape"> </div>
+            <p class="sample_box11_title">つまみ</p>
+          </div>
+        </div>
+        <div id="section3">
+          <div class="box">
+            <img id="section2_img" src="./img/section3_img.png" alt="" width="80%">
+            <div class="htable"><div id="j_result3">JSONデータを取得中...</div></div>
+          </div>
+          <div class="sample_box11">
+            <div class="sample_box11_tape"> </div>
+            <p class="sample_box11_title_s">かくど</p>
+            <p class="sample_box11_title">角度</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="history">
+      <ul class="cp_list">
+        <li>2023/01/20 09:30<button  class="Button-style">詳細</button></li>
+        <li>2023/01/20 09:40<button  class="Button-style">詳細</button></li>
+        <li>2023/01/20 09:50<button  class="Button-style">詳細</button></li>
+        <li>2023/01/20 10:00<button  class="Button-style">詳細</button></li>
+        <li>2023/01/21 09:30<button  class="Button-style">詳細</button></li>
+        <li>2023/01/21 09:40<button  class="Button-style">詳細</button></li>
+        <li>2023/01/21 09:50<button  class="Button-style">詳細</button></li>
+        <li>2023/01/21 10:00<button  class="Button-style">詳細</button></li>
+        <li>2023/01/22 09:30<button  class="Button-style">詳細</button></li>
+      </ul>
+    </div>
+
+    <footer>
+      <div id="sp-fixed-menu" class="for-sp">
+        <ul>
+          <li id="footer1"><a href="#" onclick="footerSelect(0)">設計図<br>(せっけいしょ)</a></li>
+          <li id="footer2"><a href="#" onclick="footerSelect(1)">履歴<br>(りれき)</a></li>
+        </ul>
+      </div>
+    </footer>
+
+    <script type="module" src="./config.js"></script>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script type="module" src="./j_input.js"></script>
+    <script type="text/javascript" src="./script.js"></script>
+  </body>
+</html>

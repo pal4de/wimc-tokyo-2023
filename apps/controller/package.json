@@ -12,9 +12,12 @@
   "dependencies": {
     "@abandonware/bleno": "^0.5.1-4",
     "@abandonware/noble": "^1.9.2-19",
+    "@chirimen/mpu6050": "^1.0.3",
+    "@chirimen/vl53l0x": "^1.0.7",
     "dotenv": "^16.0.3",
     "max7219-display": "^2.1.0",
     "node-web-gpio": "^1.0.17",
+    "node-web-i2c": "^1.1.23",
     "uuid": "^9.0.0",
     "websocket": "^1.0.34"
   },
