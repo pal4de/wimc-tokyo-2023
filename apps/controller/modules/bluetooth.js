@@ -214,10 +214,10 @@ export async function initChild() {
     bleno.on('advertisingStart', err => { if (err) throw err; });
     bleno.on('accept', (address) => {
         setDisplayMode("loading");
+        setTimeout(() => setDisplayMode("playlistPreset"), 5000);
         console.log(`子機が受容: ${address}`)
     });
     bleno.on('disconnect', (clientAddress) => {
-        setDisplayMode("playlistPreset");
         console.log(`子機が切断: ${clientAddress}`)
     });
 
